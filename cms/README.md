@@ -52,17 +52,17 @@ Still to do:
 - Flow "Notify: new lead" created with `flows.mjs` (2026-11-12). It sends to `hello@zindabaagh.com`, which
   needs (a) an Email Routing rule in Cloudflare (on 2026-11-12 only `support@` and `privacy@` were forwarded,
   everything else was dropped) and (b) the Brevo SMTP settings below. Until both exist no e-mail arrives.
-- `COOLIFY_DEPLOY_WEBHOOK` is in `~/.zindabaagh-cms.env`. For the "Rebuild website" flow, Coolify's API access must
+- `COOLIFY_DEPLOY_WEBHOOK` (with `force=true`, otherwise Coolify skips the build when the code is unchanged) is in `~/.zindabaagh-cms.env`. For the "Rebuild website" flow, Coolify's API access must
   be switched on (Keys & Tokens → API Tokens → Enable API Access) and a token with "deploy" permission added
   to that file as `COOLIFY_TOKEN=`; then run `node cms/flows.mjs` again.
-3. **Until step 5 is done:** after publishing or changing something in Directus, press **Redeploy** on the
-   `zindabaagh-website` app in Coolify (or push any commit) so the site rebuilds.
+3. **Until step 5 is done:** after publishing or changing something in Directus, use **Redeploy → Force deploy (without cache)** on the
+   `zindabaagh-website` app in Coolify. A plain redeploy reuses the last image and does not fetch new CMS content.
 4. **E-mail:** create a Brevo SMTP key named `zindabaagh-cms`; set `EMAIL_TRANSPORT=smtp`, `BREVO_SMTP_USER`
    and `BREVO_SMTP_KEY` in the service's environment variables. Restart.
 5. **Rebuild on publish:** in Coolify, copy the website app's **Deploy webhook** URL and create an
    API token. In Directus: Settings → Flows → new flow, trigger "Event hook" (action, on
    `items.create` and `items.update` of `guides`, `pages`, `site`), operation "Webhook / Request URL":
-   `GET <deploy webhook URL>` with the header `Authorization: Bearer <Coolify token>`.
+   `POST <deploy webhook URL>` with the header `Authorization: Bearer <Coolify token>`.
 6. **Lead notification:** second flow, trigger `items.create` on `leads`, operation "Send Email"
    to your inbox with `{{$trigger.payload.name}}`, `{{$trigger.payload.email}}`, `{{$trigger.payload.goal}}`.
 7. **Backup:** the whole database is `/directus/database/data.db`. Copy it to R2 nightly (same

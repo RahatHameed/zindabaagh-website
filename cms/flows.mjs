@@ -7,7 +7,8 @@
 // Reads from ~/.zindabaagh-cms.env (or the environment):
 //   CMS_ADMIN_TOKEN          required
 //   LEAD_NOTIFY_TO           inbox for lead e-mails (default hello@zindabaagh.com)
-//   COOLIFY_DEPLOY_WEBHOOK   deploy address of the zindabaagh-website app   } flow 2 is skipped
+//   COOLIFY_DEPLOY_WEBHOOK   deploy address of the zindabaagh-website app,  } flow 2 is skipped
+//                            ending in force=true (else the build is skipped) }
 //   COOLIFY_TOKEN            Coolify API token with "deploy" permission    } until both are set
 // Secrets are sent to Directus only and never printed.
 //
@@ -68,7 +69,7 @@ console.log(`  lead e-mails go to ${to}`);
 if (env.COOLIFY_DEPLOY_WEBHOOK && env.COOLIFY_TOKEN) {
   await flow("Rebuild website", "rocket_launch", { type: "action", scope: ["items.create", "items.update", "items.delete"], collections: ["guides", "pages", "site"] }, {
     key: "deploy_site", name: "Ask Coolify to redeploy", type: "request",
-    options: { method: "GET", url: env.COOLIFY_DEPLOY_WEBHOOK, headers: [{ header: "Authorization", value: `Bearer ${env.COOLIFY_TOKEN}` }] },
+    options: { method: "POST", url: env.COOLIFY_DEPLOY_WEBHOOK, headers: [{ header: "Authorization", value: `Bearer ${env.COOLIFY_TOKEN}` }] },
   });
 } else {
   console.log('flow "Rebuild website" skipped: add COOLIFY_DEPLOY_WEBHOOK and COOLIFY_TOKEN to ~/.zindabaagh-cms.env');
