@@ -258,6 +258,8 @@ ${page.body}
   const config = { email: site.email, leadEndpoint: cmsUrl ? `${cmsUrl}/items/leads` : "" };
   await writeFile(join(out, "js/facts.js"), `window.ZB_FACTS = ${JSON.stringify(site.facts)};\nwindow.ZB_SITE = ${JSON.stringify(config)};\n`);
 
+  // Changes on every build, so browsers fetch new CSS and JS after a deploy instead of using their cached copy.
+  const version = Date.now().toString(36);
   const urls = [];
   for (const page of pages) {
     const file = page.file;
@@ -287,12 +289,12 @@ ${page.body}
   <link rel="canonical" href="${canonical}">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css?v=${version}">
 </head>
 <body>${header}
   <main>${page.fromCms ? main : fill(main)}
   </main>${footer}
-${scripts.map((s) => `  <script src="${s}" defer></script>`).join("\n")}
+${scripts.map((s) => `  <script src="${s}?v=${version}" defer></script>`).join("\n")}
 </body>
 </html>
 `;
