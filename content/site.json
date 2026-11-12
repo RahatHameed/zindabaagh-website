@@ -369,6 +369,7 @@
   ],
   "cms": {
     "url": "https://cms.zindabaagh.com",
-    "uploadFolder": "6d62ee43-5da3-45b7-abf9-e2135573e083"
+    "uploadFolder": "6d62ee43-5da3-45b7-abf9-e2135573e083",
+    "turnstileSiteKey": "0x4AAAAAAF-aA37jUOQcCcBE"
   }
 }

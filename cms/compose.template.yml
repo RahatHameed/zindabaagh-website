@@ -33,6 +33,7 @@ services:
       - FILES_MAX_UPLOAD_SIZE=10mb
       - 'FILES_MIME_TYPE_ALLOW_LIST=application/pdf,image/jpeg,image/png,image/webp,image/gif,image/avif'
       - LEAD_UPLOAD_FOLDER=6d62ee43-5da3-45b7-abf9-e2135573e083
+      - 'TURNSTILE_SECRET=${TURNSTILE_SECRET:-}'
       - EXTENSIONS_AUTO_RELOAD=false
     volumes:
       - 'directus-database:/directus/database'

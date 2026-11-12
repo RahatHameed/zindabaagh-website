@@ -5,7 +5,7 @@
 (function () {
   const form = document.getElementById("lead-form"), note = document.getElementById("lead-note"), button = document.getElementById("lead-submit");
   const uploads = document.getElementById("uploads");
-  const { email, leadEndpoint, filesEndpoint, uploadFolder } = window.ZB_SITE || {};
+  const { email, leadEndpoint, filesEndpoint, uploadFolder, turnstileSiteKey } = window.ZB_SITE || {};
   const fields = ["name", "email", "whatsapp", "country", "goal", "service", "qualification", "field", "experience", "timeline", "german", "english", "message"];
   const fileFields = ["file_ielts", "file_cv", "file_degree", "file_transcript"];
   const MAX = 10 * 1024 * 1024;
@@ -24,6 +24,21 @@
   toggleUploads();
 
   const show = (kind, html) => { note.className = "form-note " + kind; note.innerHTML = html; };
+
+  // Cloudflare Turnstile (spam protection, no puzzle for most visitors). The CMS checks the token.
+  const box = document.getElementById("turnstile-box");
+  let widget = null;
+  if (turnstileSiteKey && leadEndpoint && box) {
+    window.zbTurnstileReady = () => {
+      widget = window.turnstile.render(box, { sitekey: turnstileSiteKey, action: "free-evaluation", theme: "auto", size: "flexible" });
+    };
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=zbTurnstileReady";
+    script.async = true;
+    document.head.appendChild(script);
+  }
+  const captcha = () => (widget !== null && window.turnstile ? window.turnstile.getResponse(widget) || "" : "");
+  const resetCaptcha = () => { if (widget !== null && window.turnstile) window.turnstile.reset(widget); };
 
   function mailFallback(data, hadFiles) {
     const body = fields.map((f) => `${f}: ${data[f] || "-"}`).join("\n");
@@ -54,6 +69,8 @@
     if (tooBig) { show("err", `“${tooBig[1].name}” is larger than 10 MB. Please upload a smaller file (a PDF or a photo usually works).`); return; }
 
     if (!leadEndpoint) { mailFallback(data, files.length > 0); return; }
+    // The widget is on the page but not solved yet (if it could not load at all, the CMS decides).
+    if (widget !== null && !captcha()) { show("err", "Please complete the security check above the button, then send again."); return; }
     button.disabled = true;
     try {
       for (let i = 0; i < files.length; i++) {
@@ -61,12 +78,21 @@
         data[files[i][0]] = await uploadFile(files[i][1]);
       }
       show("ok", "Sending your request…");
+      const token = captcha(); // read after the uploads: the widget renews expired tokens by itself
+      if (token) data.captcha = token;
       const res = await fetch(leadEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (res.status === 400 && /security check/i.test(await res.text())) {
+        resetCaptcha();
+        show("err", "The security check did not go through. Please complete it again and press send.");
+        return;
+      }
       if (!res.ok) throw new Error("HTTP " + res.status);
       form.reset();
       toggleUploads();
+      resetCaptcha();
       show("ok", `<strong>Thank you, we have your request${files.length ? " and your documents" : ""}.</strong> We read every request ourselves and usually reply within two working days.`);
     } catch {
+      resetCaptcha();
       mailFallback(data, files.length > 0);
     } finally {
       button.disabled = false;

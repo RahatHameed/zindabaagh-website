@@ -12,7 +12,7 @@ Daily use: [../docs/USING-DIRECTUS.md](../docs/USING-DIRECTUS.md).
 | `compose.template.yml` | Coolify Docker Compose of the service `zindabaagh-cms` (Directus + backup), with placeholders | – |
 | `make-compose.mjs` | Fills the template with the upload guard and the backup script → `compose.yml` | `node cms/make-compose.mjs` |
 | `compose.yml` | Generated; paste into Coolify (Edit Compose File → Validate → Save → Force Restart) | – |
-| `extensions/upload-guard/` | Directus hook: checks uploads into "Lead uploads", removes fakes and empty records | via compose |
+| `extensions/upload-guard/` | Directus hook: checks uploads into "Lead uploads", removes fakes, empty records and unused documents; verifies Cloudflare Turnstile on leads | via compose |
 | `backup/backup.sh` | Nightly encrypted SQLite backup to R2 (runs in the `backup` container) | via compose |
 | `env.example` | All Directus settings with explanations (reference) | – |
 | `setup.mjs` | Collections `guides`, `pages`, `site`, `leads`; public permissions; Guide publisher user + `CMS_TOKEN` | once / safe to re-run |
@@ -37,8 +37,11 @@ All set up and tested on the live CMS:
   (POST with `force=true`, tested: 44 s from save to live).
 - Nightly backup to R2 (`backups/`), first one on 2026-11-12, 30 days kept. Restore not tested yet.
 
+- Cloudflare Turnstile on the form (site key in `content/site.json`, secret `TURNSTILE_SECRET` in Coolify);
+  lead e-mails go straight to zindabaagh@gmail.com with Reply-To = visitor.
+
 Open: clear the admin token when set-up work is over; copy `BACKUP_PASSPHRASE` from Coolify to Bitwarden;
-restore test; Cloudflare Turnstile for the form.
+restore test.
 
 ## Publishing a guide from a script
 

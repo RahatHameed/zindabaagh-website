@@ -6,7 +6,7 @@
 //
 // Reads from ~/.zindabaagh-cms.env (or the environment):
 //   CMS_ADMIN_TOKEN          required
-//   LEAD_NOTIFY_TO           inbox for lead e-mails (default hello@zindabaagh.com)
+//   LEAD_NOTIFY_TO           inbox for lead e-mails (default zindabaagh@gmail.com)
 //   COOLIFY_DEPLOY_WEBHOOK   deploy address of the zindabaagh-website app,  } flow 2 is skipped
 //                            ending in force=true (else the build is skipped) }
 //   COOLIFY_TOKEN            Coolify API token with "deploy" permission    } until both are set
@@ -47,11 +47,12 @@ async function flow(name, icon, triggerOptions, operation) {
   console.log(`flow "${name}" active`);
 }
 
-const to = env.LEAD_NOTIFY_TO || "hello@zindabaagh.com";
+// Sent straight to Gmail (not through the hello@ forwarding). "Reply" in Gmail answers the visitor.
+const to = env.LEAD_NOTIFY_TO || "zindabaagh@gmail.com";
 await flow("Notify: new lead", "person_add", { type: "action", scope: ["items.create"], collections: ["leads"] }, {
   key: "mail_lead", name: "E-mail the lead", type: "mail",
   options: {
-    to: [to], type: "markdown",
+    to: [to], replyTo: ["{{$trigger.payload.email}}"], type: "markdown",
     subject: "New free evaluation: {{$trigger.payload.name}} ({{$trigger.payload.goal}})",
     body: [
       "**{{$trigger.payload.name}}** sent a free evaluation request.", "",

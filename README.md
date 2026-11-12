@@ -95,8 +95,15 @@ Bitwarden as you create it (section 6 of ARCHITECTURE.md lists them all).
    COOLIFY_TOKEN=…
    ```
    (The app uuid is in the app's address bar in Coolify.)
-3. `node cms/flows.mjs` → creates "Notify: new lead" and "Rebuild website".
+3. `node cms/flows.mjs` → creates "Notify: new lead" (to zindabaagh@gmail.com; other inbox: `LEAD_NOTIFY_TO=…`
+   in the env file) and "Rebuild website".
 4. Cloudflare → Email Routing → rule `hello@zindabaagh.com` → your inbox.
+5. Spam protection: Cloudflare → Application security → **Turnstile** → Add widget: name
+   `zindabaagh free evaluation`, hostname `zindabaagh.com`, mode **Managed** → Create.
+   - **Site key** (public) → `content/site.json` → `cms.turnstileSiteKey`, commit and push.
+   - **Secret key** → Bitwarden and Coolify → zindabaagh-cms → Environment Variables → `TURNSTILE_SECRET`
+     (Build time: not available) → Restart → **Pull latest and restart**. Set it only after the website with
+     the site key is live, otherwise leads are refused in between.
 
 ### 7. Check
 - Publish a draft guide in Directus → the website deploys within ~1 minute.

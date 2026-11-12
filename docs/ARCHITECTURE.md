@@ -89,7 +89,12 @@ Directus 11, Coolify Docker Compose service `zindabaagh-cms`. The compose file i
 **upload-guard extension** (`cms/extensions/upload-guard/`): after every upload into "Lead uploads" it
 reads the stored file and deletes it unless the content really is PDF/JPG/PNG/WEBP, the file name matches,
 and a PDF contains no active content (`/JavaScript`, `/Launch`, `/EmbeddedFile`, …). Every 30 minutes it
-removes empty records left by refused uploads. Directus itself enforces `FILES_MAX_UPLOAD_SIZE=10mb` and a
+removes empty records left by refused uploads, and documents older than 2 hours that no lead points to
+(abandoned forms, bots, and the documents of leads you deleted). It also checks **Cloudflare Turnstile** on
+every public lead: the form sends the token as `captcha`, the hook verifies it with Cloudflare
+(`TURNSTILE_SECRET`, hostname must be zindabaagh.com / www) and removes it before saving; a failed check
+answers 400. Logged-in users and API tokens are not checked. Without `TURNSTILE_SECRET` the check is off,
+and if Cloudflare cannot be reached the lead is accepted (logged). Directus itself enforces `FILES_MAX_UPLOAD_SIZE=10mb` and a
 MIME allow-list. Tested on 2026-11-12: real PDF kept; fake PDF (exe), PDF with JavaScript, wrong extension,
 wrong type, 11 MB file and uploads into other folders all rejected or deleted.
 
@@ -123,6 +128,7 @@ container, and start the service again. **A restore has not been tested yet.**
 | `hello@zindabaagh.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (rule added 2026-11-12) |
 | `support@`, `privacy@zindabaagh.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (added for ExamKlar) |
 | Everything else @zindabaagh.com | in | dropped (catch-all disabled) |
+| Lead notification | out | Flow "Notify: new lead" → Brevo → **zindabaagh@gmail.com directly** (since 2026-11-12, not via hello@), Reply-To = the visitor's e-mail |
 | `noreply@mail.zindabaagh.com` | out | Directus → Brevo SMTP (`smtp-relay.brevo.com:587`); domain authenticated in Brevo (DKIM/DMARC in Cloudflare) |
 | Cal.com | bookings | 1-on-1 calls with online payment; linked from `/services` and the home page |
 
@@ -144,6 +150,8 @@ cms.zindabaagh.com"), in **Coolify**, and in the local file **`C:\Users\Zigron\.
 | Brevo SMTP key `zindabaagh-cms` | 2026-11-12, Brevo → SMTP & API | Coolify env `BREVO_SMTP_KEY`; Bitwarden. Login (not secret): `BREVO_SMTP_USER=c29990001@smtp-brevo.com` | Brevo |
 | Coolify API token `directus-rebuild` | 2026-11-12, Coolify → Keys & Tokens (permission **deploy** only, resource **zindabaagh-website** only, no expiry) | `~/.zindabaagh-cms.env` `COOLIFY_TOKEN`; inside the Directus flow "Rebuild website"; Bitwarden | Coolify |
 | `COOLIFY_DEPLOY_WEBHOOK` (not secret) | 2026-11-12 | `~/.zindabaagh-cms.env` and the flow | |
+| Turnstile widget "zindabaagh free evaluation": **secret key** | 2026-11-12, Cloudflare → Application security → Turnstile (hostname zindabaagh.com, mode Managed) | Coolify env `TURNSTILE_SECRET` (service zindabaagh-cms, read by the upload-guard hook); Bitwarden | Cloudflare → Turnstile → widget → Rotate secret key |
+| Turnstile **site key** (not secret) | 2026-11-12, same widget | `content/site.json` → `cms.turnstileSiteKey` (public, sent to browsers) | |
 
 **Settings changed on 2026-11-12:** Coolify API access enabled (Settings → Advanced); Cloudflare Email Routing
 rule `hello@` → zindabaagh@gmail.com.
@@ -167,7 +175,9 @@ the env file, run `node cms/flows.mjs` again for the Coolify token, and delete t
 - Pushing to GitHub needs Rahat's go-ahead (the assistant may not deploy to production). Commit `622afed`
   (study uploads, Cal.com link, guide lead box) was **not pushed yet** on 2026-11-12.
 - Impressum and privacy policy contain placeholders (name, address, VAT line, retention periods).
-- Spam protection: honeypot + Directus rate limit only. Planned: Cloudflare Turnstile on the form.
+- Spam protection: Cloudflare Turnstile on the lead (2026-11-12), honeypot, Directus rate limit. Document
+  uploads themselves are not Turnstile-checked (a token can be used only once); unused uploads are removed
+  after 2 hours by the guard.
 - Backups: restore not tested yet. Uploaded files in R2 are not versioned (deleting one is final).
 - The PDF check is a strong heuristic, not a virus scanner. Open uploads in the browser's PDF viewer.
 - Figures (Blue Card, Opportunity Card points, tax) come from secondary sources and need a yearly check.

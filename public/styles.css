@@ -323,3 +323,7 @@ button.btn[disabled] { opacity: .6; cursor: wait; }
 .footer-cols nav a { display: block; padding: 4px 0; color: var(--muted); text-decoration: none; }
 .footer-cols nav a:hover { color: var(--brand); }
 .footer-note { margin: 32px 0 0; padding-top: 20px; border-top: 1px solid var(--border); font-size: .85rem; }
+
+/* Cloudflare Turnstile on the free evaluation form */
+.turnstile-box { margin: 16px 0 0; }
+.turnstile-box:empty { display: none; }

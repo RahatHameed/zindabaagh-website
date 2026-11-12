@@ -8,7 +8,7 @@ Where every enquiry, e-mail and evaluation request arrives, and how to work with
 
 | What | Where you see it | Notification |
 |---|---|---|
-| **Free evaluation requests** (incl. uploaded documents) | Directus → **Leads** (https://cms.zindabaagh.com/admin/content/leads) | E-mail "New free evaluation: <name> (<goal>)" to hello@ → zindabaagh@gmail.com |
+| **Free evaluation requests** (incl. uploaded documents) | Directus → **Leads** (https://cms.zindabaagh.com/admin/content/leads) | E-mail "New free evaluation: <name> (<goal>)" straight to zindabaagh@gmail.com; **Reply** answers the visitor |
 | E-mails to hello@zindabaagh.com (contact links on the site, Impressum) | Gmail **zindabaagh@gmail.com** | Gmail |
 | E-mails to support@ / privacy@zindabaagh.com | Gmail **zindabaagh@gmail.com** | Gmail |
 | Form requests when the CMS was down (fallback) | Gmail, as an e-mail from the visitor's own address with the answers in the text | Gmail |
@@ -19,7 +19,7 @@ Where every enquiry, e-mail and evaluation request arrives, and how to work with
 | Is the site/CMS running, did a rebuild work? | Coolify (https://coolify.zindabaagh.com) → app / service → **Logs**, **Deployments** | – |
 | Backups | Coolify → zindabaagh-cms → Logs → service **backup** ("backup ok: …"); files in Cloudflare R2 → bucket `zindabaagh-cms` → `backups/` | – |
 
-Tip: in Gmail, create a filter for `to:hello@zindabaagh.com` and `subject:"New free evaluation"` with a label
+Tip: in Gmail, create a filter for `from:noreply@mail.zindabaagh.com` and `subject:"New free evaluation"` with a label
 "Leads", so requests never get lost between other mail.
 
 ## Logging in
@@ -42,9 +42,16 @@ password: "Forgot password" on the login page; the reset mail goes to hello@ →
 6. **Filter / search:** the search box at the top, or the filter icon (e.g. `lead_status = new`,
    `goal = study`). Save useful filters as **bookmarks** in the left menu ("Open leads", "Study leads").
 7. **Export:** the "…" menu at the top right of the list → Export (CSV/Excel), for example for a monthly overview.
-8. **Delete on request** (GDPR): open the lead → delete (bin icon). Then also delete its files under
-   **File Library → Lead uploads**. The privacy policy promises deletion after 12 months without contact:
-   once a month, filter `date_created < 12 months ago` and delete those leads and their files.
+8. **Delete on request** (GDPR): open the lead → delete (bin icon). Its documents in **File Library → Lead
+   uploads** are removed automatically within about 2½ hours (the upload guard deletes documents no lead
+   points to). The privacy policy promises deletion after 12 months without contact: once a month, filter
+   `date_created < 12 months ago` and delete those leads.
+   Keep only form documents in "Lead uploads": anything there that no lead points to is deleted after 2 hours.
+
+**Spam protection:** the form has a Cloudflare Turnstile check (most visitors see nothing or one tick box).
+Leads without a valid check are refused. Leads you create by hand in Directus are not affected. Refused
+attempts show up in Coolify → zindabaagh-cms → Logs as "lead refused, Turnstile failed". Turnstile
+statistics: Cloudflare → Application security → Turnstile.
 
 ## Writing and publishing a guide
 
@@ -84,3 +91,6 @@ Save → the site rebuilds by itself. If something looks wrong, change it back a
 - Directus → Settings → **Flows** → "Rebuild website" → the logs (right side) show whether Coolify answered.
 - By hand: Coolify → `zindabaagh-website` → Redeploy → **Force deploy (without cache)**.
 - No lead e-mail? Directus → Flows → "Notify: new lead" logs, then Brevo → Transactional → Logs, then Gmail spam.
+- Visitors say the form says "security check failed"? Check that `TURNSTILE_SECRET` in Coolify matches the
+  widget in Cloudflare → Turnstile, and that the widget's hostname is zindabaagh.com. To switch the check off
+  quickly: empty `TURNSTILE_SECRET` in Coolify → Restart → Pull latest and restart.
