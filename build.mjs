@@ -286,7 +286,7 @@ ${page.body}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)}</title>
-  <meta name="description" content="${esc(description)}">${page.noindex ? '\n  <meta name="robots" content="noindex">' : ""}
+  <meta name="description" content="${esc(description)}">${site.indexing === false ? '\n  <meta name="robots" content="noindex, nofollow">' : page.noindex ? '\n  <meta name="robots" content="noindex">' : ""}
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
   <meta property="og:type" content="website">
@@ -318,7 +318,13 @@ ${scripts.map((s) => `  <script src="${s}?v=${version}" defer></script>`).join("
       .map((u) => `  <url><loc>${u}</loc></url>`)
       .join("\n")}\n</urlset>\n`
   );
-  await writeFile(join(out, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
+  // "indexing": false in site.json keeps search engines out: every page gets a noindex tag and the
+  // sitemap is not announced. Crawling stays allowed on purpose, so search engines can read the tag
+  // (a robots.txt block would hide it, and already-known URLs could stay listed).
+  await writeFile(
+    join(out, "robots.txt"),
+    site.indexing === false ? `User-agent: *\nAllow: /\n` : `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`
+  );
   return urls.length;
 }
 
