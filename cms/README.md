@@ -1,0 +1,78 @@
+# CMS: Directus at cms.zindabaagh.com
+
+Directus is the admin panel for guides (blog posts), simple pages, the menu, the services list
+and the leads from the free evaluation form. The website stays static: when it is built, it reads
+the published content from Directus. If Directus cannot be reached, the build uses the files in
+`content/` and the site still deploys.
+
+```
+You or a script → Directus (cms.zindabaagh.com) → "publish" → Coolify rebuilds zindabaagh.com
+Visitor → free evaluation form → Directus "leads" → e-mail notification to you
+Images and uploads → Cloudflare R2 (not the server disk)
+Database → one small SQLite file on a Coolify volume
+```
+
+## What is in this folder
+
+| File | Purpose |
+|---|---|
+| `env.example` | The environment variables to enter in Coolify |
+| `setup.mjs` | Run once: creates the collections, the public permissions and the "Guide publisher" token |
+| `publish-guide.mjs` | Creates or updates a guide from a local file (by hand, or from the reel skill) |
+
+## Set-up, in order
+
+1. **Cloudflare R2:** create the bucket `zindabaagh-cms` (EU location) and an API token with
+   "Object Read & Write" for that bucket only. Note the access key id, the secret and the endpoint.
+2. **Coolify:** new resource → Docker Image → `directus/directus:11` → domain
+   `https://cms.zindabaagh.com`, port `8055`. Add a persistent volume mounted at
+   `/directus/database`. Enter the variables from `env.example`. Deploy.
+3. **Admin token:** log in at `https://cms.zindabaagh.com/admin`, open your user (bottom left),
+   generate a **Token**, save the user. Then run on your PC:
+   ```powershell
+   $env:CMS_URL="https://cms.zindabaagh.com"; $env:CMS_ADMIN_TOKEN="<the token>"; node cms/setup.mjs
+   ```
+   It prints a `CMS_TOKEN` for the Guide publisher. Save it in Bitwarden and in the file
+   `C:\Users\<you>\.zindabaagh-cms.env`:
+   ```
+   CMS_URL=https://cms.zindabaagh.com
+   CMS_TOKEN=...
+   ```
+   Afterwards remove the token from your admin user again (it is only needed for set-up).
+4. **Website:** in the Coolify app `zindabaagh-website`, add the variable
+   `CMS_URL=https://cms.zindabaagh.com` and tick **Build variable**. Redeploy. The free evaluation
+   form now saves to Directus instead of opening the visitor's e-mail program.
+5. **Rebuild on publish:** in Coolify, copy the website app's **Deploy webhook** URL and create an
+   API token. In Directus: Settings → Flows → new flow, trigger "Event hook" (action, on
+   `items.create` and `items.update` of `guides`, `pages`, `site`), operation "Webhook / Request URL":
+   `GET <deploy webhook URL>` with the header `Authorization: Bearer <Coolify token>`.
+6. **Lead notification:** second flow, trigger `items.create` on `leads`, operation "Send Email"
+   to your inbox with `{{$trigger.payload.name}}`, `{{$trigger.payload.email}}`, `{{$trigger.payload.goal}}`.
+7. **Backup:** the whole database is `/directus/database/data.db`. Copy it to R2 nightly (same
+   approach as `examklar-backup`).
+
+## Publishing a guide from a script
+
+```powershell
+node cms/publish-guide.mjs my-guide.json            # saves a draft, prints the edit link
+node cms/publish-guide.mjs my-guide.json --publish  # publishes; the site rebuilds
+```
+
+`my-guide.json`:
+```json
+{
+  "slug": "student-visa-checklist",
+  "title": "Student visa checklist for Germany",
+  "description": "Every document the embassy asks for, in the order to prepare them.",
+  "bodyFile": "student-visa-checklist.html",
+  "keyword": "VISA",
+  "relatedTool": "visa-finder"
+}
+```
+The guide's public address is `https://zindabaagh.com/guides/<slug>`. That is the link for the
+"Full guide" button in a keyword DM.
+
+## Status
+
+`setup.mjs` and `publish-guide.mjs` were written against the Directus 11 API but have **not been
+run yet** (no Directus existed when they were written). Expect to fix small things on the first run.

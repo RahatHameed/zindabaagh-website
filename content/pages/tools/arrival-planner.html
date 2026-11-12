@@ -1,0 +1,40 @@
+---
+{
+  "tool": "arrival-planner",
+  "lead": "The first weeks in Germany are mostly paperwork, and the order matters. Enter your dates and get a to-do list with deadlines.",
+  "scripts": ["/js/tools/arrival-planner.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <label class="field">
+            <span>Date you move into your home in Germany</span>
+            <input id="movein" type="date">
+            <small>The registration deadline counts from the day you move in, not the day you land.</small>
+          </label>
+          <label class="field">
+            <span>You are coming to</span>
+            <select id="role">
+              <option value="work">Work</option>
+              <option value="study">Study</option>
+              <option value="search">Look for a job</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Your entry visa is valid until (optional)</span>
+            <input id="visaEnd" type="date">
+            <small>Leave empty if you are an EU citizen or do not need a visa.</small>
+          </label>
+          <label class="check"><input type="checkbox" id="save"><span>Remember my dates and ticked tasks on this device</span></label>
+          <small class="muted">Saved only in this browser. Untick to delete it again.</small>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>Why the order matters</h2>
+        <p>Almost everything depends on the address registration (Anmeldung). The registration certificate is what banks, the immigration office and many landlords ask for, and registering triggers your tax ID. So the first job is a flat or room where the landlord gives you a signed confirmation (Wohnungsgeberbestätigung).</p>
+        <h2>The {{facts.anmeldungDays}}-day rule</h2>
+        <p>You must register within {{facts.anmeldungDays}} days of moving in. In big cities appointments can be booked out for weeks. Book one as soon as you know your move-in date. If you cannot get one in time, keep proof that you tried: offices generally accept a late registration when the delay was theirs.</p>
+        <p>Source: <a href="https://www.make-it-in-germany.com/en/" target="_blank" rel="noopener">Make it in Germany</a>, the federal government's portal.</p>
+      </section>

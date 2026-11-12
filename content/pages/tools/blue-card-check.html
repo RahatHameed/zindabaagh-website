@@ -1,0 +1,54 @@
+---
+{
+  "tool": "blue-card-check",
+  "lead": "Enter the salary from your job offer and see whether it reaches this year's EU Blue Card threshold.",
+  "scripts": ["/js/tools/blue-card-check.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <label class="field">
+            <span>Gross salary in the offer (€)</span>
+            <input id="salary" type="text" inputmode="decimal" value="52000" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>This amount is</span>
+            <select id="period">
+              <option value="1">per year</option>
+              <option value="12">per month (× 12)</option>
+            </select>
+            <small>Count fixed base pay only. Bonuses that are not guaranteed usually do not count.</small>
+          </label>
+          <label class="field">
+            <span>Your qualification</span>
+            <select id="qual">
+              <option value="degree">University degree (recognised or comparable)</option>
+              <option value="it">No degree, but 3+ years of IT experience in the last 7 years</option>
+              <option value="none">Neither of these</option>
+            </select>
+          </label>
+          <fieldset>
+            <legend>Does one of these apply?</legend>
+            <label class="check"><input type="checkbox" id="shortage"><span>The job is in a shortage occupation (for example IT, engineering, medicine, nursing, teaching, some management roles)</span></label>
+            <label class="check"><input type="checkbox" id="newgrad"><span>I finished my degree less than 3 years ago</span></label>
+            <small>Either one moves you to the lower threshold.</small>
+          </fieldset>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>How the Blue Card salary rule works</h2>
+        <p>The EU Blue Card is a residence permit for academics and comparable professionals with a job offer in Germany. One of its conditions is a minimum gross annual salary, which changes every January.</p>
+        <ul>
+          <li><strong>Standard threshold {{facts.year}}:</strong> {{facts.blueCard.standard|eur}} a year.</li>
+          <li><strong>Lower threshold {{facts.year}}:</strong> {{facts.blueCard.reduced|eur2}} a year. It applies to shortage occupations, to people who graduated within the last three years, and to IT specialists without a degree who have at least three years of comparable experience.</li>
+        </ul>
+        <h2>What else you need</h2>
+        <ul>
+          <li>A concrete job offer or contract for at least six months, in a job that fits your qualification.</li>
+          <li>A German degree, or a foreign degree that is recognised or comparable. You can look yours up in the <a href="https://anabin.kmk.org/" target="_blank" rel="noopener">anabin database</a>.</li>
+          <li>With the lower threshold, the Federal Employment Agency has to approve the job.</li>
+        </ul>
+        <p>Source: <a href="https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card" target="_blank" rel="noopener">Make it in Germany, EU Blue Card</a>.</p>
+      </section>

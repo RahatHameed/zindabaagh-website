@@ -1,0 +1,54 @@
+---
+{
+  "tool": "salary-calculator",
+  "lead": "Enter a gross salary and see roughly what arrives in your bank account each month, and where the rest goes.",
+  "scripts": ["/js/tools/salary-calculator.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <div class="row2">
+            <label class="field">
+              <span>Gross salary (€)</span>
+              <input id="gross" type="text" inputmode="decimal" value="55000" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Period</span>
+              <select id="period">
+                <option value="1">per year</option>
+                <option value="12">per month</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">
+            <span>Family situation</span>
+            <select id="status">
+              <option value="single">Single, or both partners work (tax class I / IV)</option>
+              <option value="married">Married, I am the only or main earner (tax class III)</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="children"><span>I have children</span></label>
+          <label class="check"><input type="checkbox" id="church"><span>I am a member of a church that collects church tax</span></label>
+          <label class="field" style="margin-top:14px">
+            <span>Health insurer's additional contribution (%)</span>
+            <input id="addon" type="text" inputmode="decimal" value="{{facts.social.healthAddOnAverage}}" autocomplete="off">
+            <small>Each public insurer sets its own rate. {{facts.social.healthAddOnAverage}}% is the {{facts.year}} average. You pay half of it.</small>
+          </label>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>What comes off a German salary</h2>
+        <ul>
+          <li><strong>Income tax (Lohnsteuer):</strong> progressive. The first {{facts.tax.basicAllowance|eur}} of taxable income is tax-free in {{facts.year}}, and the rate rises from 14% to 42%.</li>
+          <li><strong>Pension insurance:</strong> {{facts.social.pensionRate}}% of gross, up to {{facts.social.ceilingPension|eur}} a year.</li>
+          <li><strong>Unemployment insurance:</strong> {{facts.social.unemploymentRate}}%, same ceiling.</li>
+          <li><strong>Health insurance:</strong> {{facts.social.healthRate}}% plus half of your insurer's additional contribution, up to {{facts.social.ceilingHealth|eur}} a year.</li>
+          <li><strong>Long-term care insurance:</strong> {{facts.social.careRate}}%, plus {{facts.social.careChildlessExtra}}% if you are over 23 and have no children.</li>
+          <li><strong>Solidarity surcharge:</strong> only on higher incomes. <strong>Church tax:</strong> 9% of income tax (8% in Bavaria and Baden-Württemberg) for members.</li>
+        </ul>
+        <p>Your employer pays roughly the same social contributions again on top of your gross salary.</p>
+        <h2>How exact is this?</h2>
+        <p>It is an estimate for an employee with public health insurance. It leaves out things that change the result by a little: reduced care contributions for several children, the different care split in Saxony, private health insurance, company cars and other benefits. For an exact figure use the Finance Ministry's <a href="https://www.bmf-steuerrechner.de/" target="_blank" rel="noopener">official wage tax calculator</a>.</p>
+      </section>

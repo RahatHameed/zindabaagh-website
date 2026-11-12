@@ -1,0 +1,371 @@
+{
+  "name": "Zindabaagh",
+  "url": "https://zindabaagh.com",
+  "email": "hello@zindabaagh.com",
+  "tagline": "Free tools and plain-language guides for studying, working and living in Germany.",
+  "facts": {
+    "year": 2026,
+    "blueCard": {
+      "standard": 50700,
+      "reduced": 45934.2
+    },
+    "blockedAccount": {
+      "monthly": 992
+    },
+    "anmeldungDays": 14,
+    "chancenkarte": {
+      "minPoints": 6
+    },
+    "social": {
+      "pensionRate": 9.3,
+      "unemploymentRate": 1.3,
+      "healthRate": 7.3,
+      "healthAddOnAverage": 2.9,
+      "careRate": 1.8,
+      "careChildlessExtra": 0.6,
+      "ceilingPension": 101400,
+      "ceilingHealth": 69750
+    },
+    "tax": {
+      "basicAllowance": 12348,
+      "employeeAllowance": 1230,
+      "specialExpenses": 36,
+      "soliExemption": 20350
+    },
+    "settlement": {
+      "blueCardB1Months": 21,
+      "blueCardA1Months": 27,
+      "skilledWorkerMonths": 36,
+      "germanGraduateMonths": 24,
+      "generalMonths": 60
+    },
+    "citizenshipYears": 5
+  },
+  "nav": [
+    {
+      "label": "Tools",
+      "href": "/#tools"
+    },
+    {
+      "label": "Guides",
+      "href": "/guides"
+    },
+    {
+      "label": "Services",
+      "href": "/services"
+    },
+    {
+      "label": "Learn German",
+      "href": "https://examklar.zindabaagh.com",
+      "external": true
+    }
+  ],
+  "navCta": {
+    "label": "Free evaluation",
+    "href": "/free-evaluation"
+  },
+  "toolGroups": [
+    {
+      "id": "study",
+      "label": "Study"
+    },
+    {
+      "id": "work",
+      "label": "Work"
+    },
+    {
+      "id": "live",
+      "label": "Live"
+    }
+  ],
+  "tools": [
+    {
+      "slug": "visa-finder",
+      "group": "study",
+      "icon": "🧭",
+      "title": "Visa Route Finder",
+      "short": "Answer a few questions and see which German visa fits your plan."
+    },
+    {
+      "slug": "grade-converter",
+      "group": "study",
+      "icon": "🎓",
+      "title": "German Grade Converter",
+      "short": "Convert your GPA or percentage to the German 1.0 to 4.0 scale."
+    },
+    {
+      "slug": "blocked-account",
+      "group": "study",
+      "icon": "🏦",
+      "title": "Blocked Account Calculator",
+      "short": "How much you need in your Sperrkonto, in euros and in your own currency."
+    },
+    {
+      "slug": "blue-card-check",
+      "group": "work",
+      "icon": "💼",
+      "title": "Blue Card Salary Check",
+      "short": "Check a job offer against this year's EU Blue Card salary thresholds."
+    },
+    {
+      "slug": "chancenkarte-points",
+      "group": "work",
+      "icon": "⭐",
+      "title": "Opportunity Card Points",
+      "short": "Count your Chancenkarte points and see if you reach the minimum."
+    },
+    {
+      "slug": "salary-calculator",
+      "group": "work",
+      "icon": "💶",
+      "title": "Net Salary Calculator",
+      "short": "Estimate your take-home pay after German tax and social contributions."
+    },
+    {
+      "slug": "arrival-planner",
+      "group": "live",
+      "icon": "🗓️",
+      "title": "First Weeks Planner",
+      "short": "Your to-do list after landing, with the Anmeldung deadline worked out."
+    },
+    {
+      "slug": "residence-timeline",
+      "group": "live",
+      "icon": "🪪",
+      "title": "PR & Citizenship Timeline",
+      "short": "See the earliest dates for a settlement permit and a German passport."
+    }
+  ],
+  "pathways": [
+    {
+      "icon": "🎓",
+      "title": "Study in Germany",
+      "text": "Admission, the student visa, the blocked account and health insurance.",
+      "href": "/tools/grade-converter",
+      "cta": "Convert your grade"
+    },
+    {
+      "icon": "💼",
+      "title": "Work with a job offer",
+      "text": "The EU Blue Card and the skilled-worker visa, salary thresholds and recognition.",
+      "href": "/tools/blue-card-check",
+      "cta": "Check your offer"
+    },
+    {
+      "icon": "⭐",
+      "title": "Come to find a job",
+      "text": "The Opportunity Card (Chancenkarte) lets qualified people job-hunt in Germany.",
+      "href": "/tools/chancenkarte-points",
+      "cta": "Count your points"
+    },
+    {
+      "icon": "🛠️",
+      "title": "Ausbildung",
+      "text": "Paid vocational training that combines a company job with school.",
+      "href": "/tools/visa-finder",
+      "cta": "Check the route"
+    },
+    {
+      "icon": "🏠",
+      "title": "Just arrived",
+      "text": "Anmeldung, tax ID, bank account, insurance and your residence permit.",
+      "href": "/tools/arrival-planner",
+      "cta": "Plan your first weeks"
+    },
+    {
+      "icon": "🪪",
+      "title": "Staying for good",
+      "text": "The settlement permit and German citizenship, and when you can apply.",
+      "href": "/tools/residence-timeline",
+      "cta": "See your timeline"
+    }
+  ],
+  "services": [
+    {
+      "slug": "free-evaluation",
+      "icon": "🧭",
+      "badge": "Free",
+      "title": "Free evaluation",
+      "text": "Tell us about your education, work and goal. We tell you which route to Germany is realistic for you and what to do first.",
+      "points": [
+        "A short form, about three minutes",
+        "A personal answer by e-mail or WhatsApp",
+        "No payment and no obligation"
+      ],
+      "href": "/free-evaluation",
+      "cta": "Start the free evaluation"
+    },
+    {
+      "slug": "study-admission",
+      "icon": "🎓",
+      "badge": "Study",
+      "title": "Study visa: admission only",
+      "text": "We find programmes that fit your grades and budget and handle the applications until you hold an admission letter.",
+      "points": [
+        "Shortlist of matching universities and programmes",
+        "Grade conversion and document check",
+        "Applications through uni-assist or directly to the university",
+        "Motivation letter and CV review"
+      ],
+      "href": "/free-evaluation?service=study-admission",
+      "cta": "Ask about admission"
+    },
+    {
+      "slug": "study-full",
+      "icon": "🛂",
+      "badge": "Study",
+      "title": "Study visa: full service",
+      "text": "Everything in the admission service, plus your visa file and interview preparation, until you are ready to fly.",
+      "points": [
+        "Everything in admission only",
+        "Blocked account and health insurance set-up",
+        "Complete visa document file, checked against your embassy's list",
+        "Visa interview guide and a practice interview",
+        "First-weeks plan for after you land"
+      ],
+      "href": "/free-evaluation?service=study-full",
+      "cta": "Ask about full service"
+    },
+    {
+      "slug": "chancenkarte",
+      "icon": "⭐",
+      "badge": "Work",
+      "title": "Opportunity Card (Chancenkarte)",
+      "text": "We check your points, tell you how to reach six, and prepare your application file for the Opportunity Card.",
+      "points": [
+        "Points check and a plan to close the gap",
+        "Help with the recognition or ZAB statement for your qualification",
+        "Complete application file for the online portal",
+        "Job-search plan for your first months in Germany"
+      ],
+      "href": "/free-evaluation?service=chancenkarte",
+      "cta": "Ask about the Opportunity Card"
+    },
+    {
+      "slug": "cv-review",
+      "icon": "📄",
+      "badge": "Career",
+      "title": "German CV review",
+      "text": "German employers expect a particular CV format. We review yours line by line and send it back ready to use.",
+      "points": [
+        "Written feedback on structure, content and wording",
+        "German-style layout that applicant tracking systems can read",
+        "Tips for your LinkedIn profile"
+      ],
+      "href": "/free-evaluation?service=cv-review",
+      "cta": "Ask about a CV review"
+    },
+    {
+      "slug": "one-on-one",
+      "icon": "💬",
+      "badge": "Call",
+      "title": "1-on-1 call",
+      "text": "A video call about your own case: your options, your documents, your next three steps. Bring every question you have.",
+      "points": [
+        "One call, fully about your situation",
+        "A written summary of your next steps afterwards"
+      ],
+      "href": "/free-evaluation?service=one-on-one",
+      "cta": "Ask about a call"
+    },
+    {
+      "slug": "examklar",
+      "icon": "🗣️",
+      "badge": "Learn German",
+      "title": "ExamKlar: German exam practice",
+      "text": "Mock exams in the Goethe and telc format from A1 to B2, vocabulary training and grammar chapters. Free to start.",
+      "points": [],
+      "href": "https://examklar.zindabaagh.com",
+      "cta": "Open ExamKlar",
+      "external": true
+    }
+  ],
+  "sources": [
+    {
+      "label": "Make it in Germany",
+      "href": "https://www.make-it-in-germany.com/en/",
+      "text": "the federal government's portal for skilled workers"
+    },
+    {
+      "label": "Federal Foreign Office",
+      "href": "https://www.auswaertiges-amt.de/en/visa-service",
+      "text": "visa information and German missions abroad"
+    },
+    {
+      "label": "DAAD",
+      "href": "https://www.daad.de/en/",
+      "text": "the German Academic Exchange Service, for studying in Germany"
+    },
+    {
+      "label": "Recognition in Germany",
+      "href": "https://www.anerkennung-in-deutschland.de/en/",
+      "text": "getting foreign qualifications recognised"
+    }
+  ],
+  "footer": [
+    {
+      "title": "Study",
+      "tools": "study"
+    },
+    {
+      "title": "Work",
+      "tools": "work"
+    },
+    {
+      "title": "Live",
+      "tools": "live"
+    },
+    {
+      "title": "Learn German",
+      "links": [
+        {
+          "label": "ExamKlar exam practice",
+          "href": "https://examklar.zindabaagh.com",
+          "external": true
+        },
+        {
+          "label": "Goethe and telc mock exams",
+          "href": "https://examklar.zindabaagh.com",
+          "external": true
+        },
+        {
+          "label": "Vocabulary and grammar",
+          "href": "https://examklar.zindabaagh.com",
+          "external": true
+        }
+      ]
+    },
+    {
+      "title": "Zindabaagh",
+      "links": [
+        {
+          "label": "Services",
+          "href": "/services"
+        },
+        {
+          "label": "Free evaluation",
+          "href": "/free-evaluation"
+        },
+        {
+          "label": "Guides",
+          "href": "/guides"
+        },
+        {
+          "label": "Contact",
+          "href": "mailto:hello@zindabaagh.com"
+        },
+        {
+          "label": "Impressum",
+          "href": "/impressum.html"
+        },
+        {
+          "label": "Privacy",
+          "href": "/datenschutz.html"
+        }
+      ]
+    }
+  ],
+  "cms": {
+    "url": ""
+  }
+}

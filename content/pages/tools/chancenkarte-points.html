@@ -1,0 +1,77 @@
+---
+{
+  "tool": "chancenkarte-points",
+  "lead": "The Opportunity Card (Chancenkarte) lets you come to Germany for up to a year to look for work. Tick what applies and see your points.",
+  "scripts": ["/js/tools/chancenkarte-points.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <h2>Step 1: basic requirements</h2>
+          <label class="field">
+            <span>Your qualification</span>
+            <select id="qual">
+              <option value="foreign">Foreign degree, or 2+ years of vocational training, recognised by the state where I got it</option>
+              <option value="partial">My qualification is partially recognised in Germany</option>
+              <option value="full">My qualification is fully recognised in Germany</option>
+              <option value="none">None of these</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>German level</span>
+            <select id="german">
+              <option value="0">None or below A1</option>
+              <option value="a1">A1</option>
+              <option value="a2">A2</option>
+              <option value="b1">B1</option>
+              <option value="b2">B2 or higher</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>English level</span>
+            <select id="english">
+              <option value="0">Below B2</option>
+              <option value="b2" selected>B2</option>
+              <option value="c1">C1 or higher, or native speaker</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="funds" checked><span>I can show enough money for my stay (blocked account, sponsor, or a part-time job contract)</span></label>
+
+          <h2 style="margin-top:22px">Step 2: points</h2>
+          <label class="field">
+            <span>Work experience in your trained profession</span>
+            <select id="exp">
+              <option value="0">Less than 2 years</option>
+              <option value="2">2+ years within the last 5 years</option>
+              <option value="3">5+ years within the last 7 years</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Your age</span>
+            <select id="age">
+              <option value="2">35 or younger</option>
+              <option value="1">36 to 40</option>
+              <option value="0">41 or older</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="shortage"><span>My qualification is in a shortage occupation</span><span class="pts">1 point</span></label>
+          <label class="check"><input type="checkbox" id="stay"><span>I lived legally in Germany for 6+ months in a row within the last 5 years (not as a tourist)</span><span class="pts">1 point</span></label>
+          <label class="check"><input type="checkbox" id="partner"><span>My spouse or partner also qualifies and is applying with me</span><span class="pts">1 point</span></label>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>How the points are counted</h2>
+        <ul>
+          <li><strong>Qualification:</strong> 4 points if your foreign qualification is partially recognised in Germany. 1 point if it is in a shortage occupation.</li>
+          <li><strong>Work experience</strong> after your qualification and related to it: 2 points for two years within the last five, 3 points for five years within the last seven.</li>
+          <li><strong>German:</strong> A2 gives 1 point, B1 gives 2, B2 or higher gives 3. <strong>English</strong> at C1 or as a native speaker adds 1 point.</li>
+          <li><strong>Age:</strong> 2 points if you are 35 or younger, 1 point from 36 to 40.</li>
+          <li><strong>Earlier stay in Germany:</strong> 1 point. <strong>Partner applying too:</strong> 1 point.</li>
+        </ul>
+        <p>You need at least {{facts.chancenkarte.minPoints}} points. If your qualification is already <em>fully</em> recognised in Germany, you get the card without the points system.</p>
+        <h2>What the card allows</h2>
+        <p>Up to one year in Germany to look for a job, part-time work of up to 20 hours a week, and trial work of up to two weeks per employer. When you find a qualified job, you switch to a work residence permit.</p>
+        <p>Source: <a href="https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card" target="_blank" rel="noopener">Make it in Germany, Opportunity Card</a>. You can apply online through the <a href="https://digital.diplo.de/chancenkarte" target="_blank" rel="noopener">Consular Services Portal</a>.</p>
+      </section>

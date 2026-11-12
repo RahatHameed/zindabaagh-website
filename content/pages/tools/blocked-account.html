@@ -1,0 +1,52 @@
+---
+{
+  "tool": "blocked-account",
+  "lead": "For a student visa you usually prove your funding with a blocked account (Sperrkonto). Work out how much to deposit.",
+  "scripts": ["/js/tools/blocked-account.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <label class="field">
+            <span>Purpose of your stay</span>
+            <select id="purpose">
+              <option value="1">University studies</option>
+              <option value="1.1">Language course or study preparation (10% more)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Months to cover</span>
+            <input id="months" type="number" min="1" max="24" value="12">
+            <small>Normally 12 months for the first visa. For a shorter stay, the number of months you will be in Germany.</small>
+          </label>
+          <label class="field">
+            <span>Provider's set-up and monthly fees for the period (€, optional)</span>
+            <input id="fees" type="text" inputmode="decimal" value="0" autocomplete="off">
+            <small>Providers charge a set-up fee and a monthly fee. Look them up at the provider you choose.</small>
+          </label>
+          <div class="row2">
+            <label class="field">
+              <span>Your currency (optional)</span>
+              <input id="cur" type="text" maxlength="5" placeholder="e.g. PKR" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Units for €1</span>
+              <input id="rate" type="text" inputmode="decimal" placeholder="today's rate" autocomplete="off">
+            </label>
+          </div>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>How a blocked account works</h2>
+        <p>You pay in the full amount before you apply for the visa. After you arrive, the provider releases one monthly portion at a time to your normal bank account. In {{facts.year}} the required amount for students is {{facts.blockedAccount.monthly|eur}} a month. It follows the student grant rate (BAföG) and is set by the German government.</p>
+        <h2>Good to know</h2>
+        <ul>
+          <li>Applicants for a language course or study preparation usually need 10% more.</li>
+          <li>Transfer a little extra. Bank charges on an international transfer can leave you a few euros short, and the confirmation is only issued for the full amount.</li>
+          <li>A blocked account is the most common proof, but not the only one. A scholarship or a formal commitment from someone living in Germany (Verpflichtungserklärung) can replace all or part of it.</li>
+          <li>The German mission in your country has a list of the providers it accepts. Check it before you open an account.</li>
+        </ul>
+        <p>Source: <a href="https://www.auswaertiges-amt.de/en/visa-service" target="_blank" rel="noopener">Federal Foreign Office, visa service</a>.</p>
+      </section>

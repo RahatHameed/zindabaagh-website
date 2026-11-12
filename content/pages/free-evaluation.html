@@ -1,0 +1,95 @@
+---
+{
+  "path": "/free-evaluation",
+  "title": "Free Evaluation: Which Route to Germany Fits You? | Zindabaagh",
+  "description": "Tell us about your education, work experience and goal. We reply with the route to Germany that is realistic for you and your first steps. Free, no obligation.",
+  "scripts": ["/js/free-evaluation.js"]
+}
+---
+    <section class="page-head">
+      <div class="wrap">
+        <p class="crumbs"><a href="/">Home</a> / Free evaluation</p>
+        <h1>Free evaluation</h1>
+        <p class="lead">Three minutes of your time. We read every form ourselves and reply with the route that is realistic for you, what it will cost, and what to do first.</p>
+      </div>
+    </section>
+    <section class="section" style="padding-top:24px">
+      <div class="wrap form-wrap">
+        <form class="panel" id="lead-form" novalidate>
+          <div class="row2">
+            <label class="field"><span>Your name</span><input name="name" type="text" autocomplete="name" required maxlength="120"></label>
+            <label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="email" required maxlength="200"></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>WhatsApp number (optional)</span><input name="whatsapp" type="tel" autocomplete="tel" maxlength="40" placeholder="+92 ..."></label>
+            <label class="field"><span>Country you live in</span><input name="country" type="text" autocomplete="country-name" required maxlength="80"></label>
+          </div>
+          <div class="row2">
+            <label class="field">
+              <span>What do you want to do?</span>
+              <select name="goal" required>
+                <option value="study">Study in Germany</option>
+                <option value="work">Work in Germany (job offer or Blue Card)</option>
+                <option value="job-search">Look for a job (Opportunity Card)</option>
+                <option value="ausbildung">Vocational training (Ausbildung)</option>
+                <option value="already-here">I am already in Germany</option>
+                <option value="not-sure">Not sure yet</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Service you are interested in</span>
+              <select name="service">
+                <option value="">Not sure, please advise</option>{{block:serviceOptions}}
+              </select>
+            </label>
+          </div>
+          <div class="row2">
+            <label class="field">
+              <span>Highest qualification</span>
+              <select name="qualification" required>
+                <option value="school">School certificate (12 years)</option>
+                <option value="bachelor">Bachelor's degree</option>
+                <option value="master">Master's degree or higher</option>
+                <option value="vocational">Vocational training or diploma</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label class="field"><span>Field and final grade</span><input name="field" type="text" maxlength="160" placeholder="e.g. BS Computer Science, CGPA 3.1/4"></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>Work experience (years)</span><input name="experience" type="text" inputmode="decimal" maxlength="20" placeholder="0"></label>
+            <label class="field">
+              <span>When do you want to move?</span>
+              <select name="timeline">
+                <option value="0-6">Within 6 months</option>
+                <option value="6-12">In 6 to 12 months</option>
+                <option value="12+">Later than a year</option>
+                <option value="unknown">I don't know yet</option>
+              </select>
+            </label>
+          </div>
+          <div class="row2">
+            <label class="field">
+              <span>German level</span>
+              <select name="german">
+                <option value="none">None</option><option value="A1">A1</option><option value="A2">A2</option>
+                <option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1 or higher</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>English level</span>
+              <select name="english">
+                <option value="basic">Basic</option><option value="good" selected>Good (B2)</option><option value="fluent">Fluent (C1 or higher)</option>
+                <option value="test">I have IELTS / TOEFL</option>
+              </select>
+            </label>
+          </div>
+          <label class="field"><span>Anything else we should know? (optional)</span><textarea name="message" maxlength="3000" placeholder="Your budget, a refused visa, a deadline, a question..."></textarea></label>
+          <label class="hp" aria-hidden="true">Leave this empty <input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+          <label class="check"><input type="checkbox" name="consent" required><span>I agree that Zindabaagh stores these details to answer my request and contacts me by e-mail or WhatsApp about it. I can ask for deletion at any time. <a href="/datenschutz.html" target="_blank">Privacy policy</a></span></label>
+          <p style="margin:18px 0 0"><button class="btn" type="submit" id="lead-submit">Send my evaluation request</button></p>
+          <div id="lead-note" role="status"></div>
+        </form>
+        <p class="muted" style="margin-top:16px">Please do not send passport scans or other documents here. We only ask for those later, if you choose a service.</p>
+      </div>
+    </section>

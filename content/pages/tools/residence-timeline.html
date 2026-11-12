@@ -1,0 +1,54 @@
+---
+{
+  "tool": "residence-timeline",
+  "lead": "Enter when your residence permit started and see the earliest dates for a settlement permit (permanent residence) and German citizenship.",
+  "scripts": ["/js/tools/residence-timeline.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <label class="field">
+            <span>Your residence permit</span>
+            <select id="permit">
+              <option value="bluecard">EU Blue Card</option>
+              <option value="skilled">Skilled worker (with vocational training or a degree)</option>
+              <option value="graduate">Working after a German degree or German vocational training</option>
+              <option value="other">Other (for example family reunion, or working without a formal qualification)</option>
+              <option value="student">Student</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Start date of this permit</span>
+            <input id="permitStart" type="date">
+          </label>
+          <label class="field">
+            <span>Date you started living in Germany</span>
+            <input id="arrival" type="date">
+            <small>Leave empty if it is the same day as above.</small>
+          </label>
+          <label class="field">
+            <span>Your German level</span>
+            <select id="german">
+              <option value="0">Below A1</option>
+              <option value="a1">A1 or A2</option>
+              <option value="b1">B1 or higher</option>
+            </select>
+          </label>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>Settlement permit (Niederlassungserlaubnis)</h2>
+        <p>The settlement permit is permanent. It is not tied to an employer and does not expire. How long you wait depends on your current permit:</p>
+        <ul>
+          <li><strong>EU Blue Card:</strong> {{facts.settlement.blueCardA1Months}} months, or {{facts.settlement.blueCardB1Months}} months with German at B1. You need A1 at least.</li>
+          <li><strong>Skilled worker:</strong> {{facts.settlement.skilledWorkerMonths}} months of holding the permit and paying pension contributions, with German at B1.</li>
+          <li><strong>After a German degree or German vocational training:</strong> {{facts.settlement.germanGraduateMonths}} months of working as a skilled worker, with German at B1.</li>
+          <li><strong>Everyone else:</strong> {{facts.settlement.generalMonths}} months, {{facts.settlement.generalMonths}} months of pension contributions and German at B1.</li>
+        </ul>
+        <p>In every case you also need a secure income, enough living space, and pension contributions for the whole waiting period.</p>
+        <h2>Citizenship (Einbürgerung)</h2>
+        <p>You can apply after {{facts.citizenshipYears}} years of legal residence in Germany. You need German at B1, a passed citizenship test, and an income that covers you and your family without social benefits. Germany allows you to keep your other nationality. The faster three-year track was abolished in 2025.</p>
+        <p>Source: <a href="https://www.make-it-in-germany.com/en/arriving-living/long-term/settlement-permit" target="_blank" rel="noopener">Make it in Germany, settlement permit</a>. Your local naturalisation office (Einbürgerungsbehörde) handles citizenship applications.</p>
+      </section>

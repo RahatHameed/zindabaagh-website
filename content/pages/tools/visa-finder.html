@@ -1,0 +1,65 @@
+---
+{
+  "tool": "visa-finder",
+  "lead": "Germany has a different visa for almost every plan. Answer a few questions and see which one fits yours, and what to do next.",
+  "scripts": ["/js/tools/visa-finder.js"]
+}
+---
+      <div class="tool-grid">
+        <form class="panel" id="form">
+          <label class="field">
+            <span>Your citizenship</span>
+            <select id="citizen">
+              <option value="third">A country outside the EU</option>
+              <option value="eu">EU, Iceland, Liechtenstein, Norway or Switzerland</option>
+              <option value="privileged">Australia, Canada, Israel, Japan, New Zealand, South Korea, UK or USA</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>What do you want to do in Germany?</span>
+            <select id="goal">
+              <option value="study">Study at a university</option>
+              <option value="work">Work (I have, or expect, a job offer)</option>
+              <option value="search">Come first and look for a job there</option>
+              <option value="training">Do vocational training (Ausbildung)</option>
+            </select>
+          </label>
+          <label class="field" data-for="work search">
+            <span>Your highest qualification</span>
+            <select id="qual">
+              <option value="degree">University degree</option>
+              <option value="vocational">Vocational training of 2 years or more</option>
+              <option value="it">No formal qualification, but 3+ years of IT experience</option>
+              <option value="none">None of these</option>
+            </select>
+          </label>
+          <label class="field" data-for="work">
+            <span>Gross yearly salary of the offer (€)</span>
+            <input id="salary" type="text" inputmode="decimal" value="48000" autocomplete="off">
+          </label>
+          <label class="check" data-for="work"><input type="checkbox" id="shortage"><span>The job is in a shortage occupation, or I graduated less than 3 years ago</span></label>
+          <label class="field" data-for="study">
+            <span>Do you have a university admission?</span>
+            <select id="admission">
+              <option value="yes">Yes, I have an admission letter</option>
+              <option value="applied">I applied and am waiting, or I still need to apply in person</option>
+              <option value="kolleg">My school certificate is not enough, I need a preparatory course first</option>
+            </select>
+          </label>
+          <label class="field" data-for="training">
+            <span>Do you have a training place?</span>
+            <select id="place">
+              <option value="yes">Yes, I have a training contract</option>
+              <option value="no">Not yet, I want to look for one</option>
+            </select>
+          </label>
+        </form>
+        <div class="panel result" id="out" aria-live="polite"></div>
+      </div>
+
+      <section class="explain">
+        <h2>How to read the result</h2>
+        <p>The finder covers the main routes for study, work, job search and vocational training. It does not cover family reunion, asylum, self-employment, research stays or au pair visas. The German mission in your country decides on your application and publishes the exact document list.</p>
+        <p>You apply for a national visa (type D) at the German embassy or consulate where you live. For many countries you can now apply online through the <a href="https://digital.diplo.de/" target="_blank" rel="noopener">Consular Services Portal</a>.</p>
+        <p>Source: <a href="https://www.make-it-in-germany.com/en/visa-residence" target="_blank" rel="noopener">Make it in Germany, visa and residence</a>.</p>
+      </section>

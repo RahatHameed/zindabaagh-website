@@ -1,0 +1,100 @@
+---
+{
+  "path": "/",
+  "title": "Zindabaagh: Free Tools for Studying, Working and Living in Germany",
+  "description": "Free calculators and planners for your move to Germany: visa route finder, Blue Card salary check, Opportunity Card points, net salary, blocked account, grade converter and more."
+}
+---
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Germany, worked out</p>
+          <h1>Plan your move to Germany with tools that do the maths.</h1>
+          <p class="lead">Which visa fits you, whether your salary is enough for a Blue Card, how much to put in the blocked account, what to do in your first two weeks. Free tools built on the official rules, for before you move and after you land.</p>
+          <div class="cta-row">
+            <a class="btn" href="#tools">Browse the tools</a>
+            <a class="btn btn-ghost" href="/tools/visa-finder">Find your visa route</a>
+          </div>
+          <p class="trust">Free · No sign-up · Nothing you enter leaves your browser</p>
+        </div>
+        <div class="facts" aria-label="Key figures for {{facts.year}}">
+          <a class="fact" href="/tools/blue-card-check">
+            <span class="fact-label">Blue Card minimum salary {{facts.year}}</span>
+            <strong>{{facts.blueCard.standard|eur}}</strong>
+            <span class="fact-sub">{{facts.blueCard.reduced|eur2}} in shortage occupations</span>
+          </a>
+          <a class="fact" href="/tools/blocked-account">
+            <span class="fact-label">Blocked account for students</span>
+            <strong>{{facts.blockedAccount.monthly|eur}} <small>a month</small></strong>
+            <span class="fact-sub">Work out your total →</span>
+          </a>
+          <a class="fact" href="/tools/arrival-planner">
+            <span class="fact-label">Anmeldung deadline</span>
+            <strong>{{facts.anmeldungDays}} days <small>after moving in</small></strong>
+            <span class="fact-sub">Plan your first weeks →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="tools" class="section section-alt">
+      <div class="wrap">
+        <h2>Free tools</h2>
+        <p class="section-lead">Each one answers a single question about your move. Pick where you are.</p>
+{{block:toolGrid}}
+      </div>
+    </section>
+
+    <section id="paths" class="section">
+      <div class="wrap">
+        <h2>Start from your situation</h2>
+        <p class="section-lead">Every route to Germany has its own rules, documents and timelines. Start with the one that fits you.</p>
+{{block:pathways}}
+      </div>
+    </section>
+
+    <section id="guides" class="section section-alt">
+      <div class="wrap">
+        <h2>Guides</h2>
+        <p class="section-lead">The rules explained in plain language, one topic at a time.</p>
+{{block:latestGuides}}
+        <p style="margin-top:20px"><a href="/guides">All guides →</a></p>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="wrap">
+        <h2>Services</h2>
+        <p class="section-lead">When a calculator is not enough: personal help with your application, from someone who made the move.</p>
+{{block:services}}
+        <p style="margin-top:24px"><a class="btn" href="/free-evaluation">Start with a free evaluation</a></p>
+      </div>
+    </section>
+
+    <section id="how" class="section section-alt">
+      <div class="wrap">
+        <h2>How we work</h2>
+        <div class="steps">
+          <div class="step">
+            <h3>Official rules first</h3>
+            <p>Every tool is built on the published law and government figures, and links to the source so you can check.</p>
+          </div>
+          <div class="step">
+            <h3>Updated every year</h3>
+            <p>Salary thresholds, tax and insurance rates change each January. The figures here are for {{facts.year}}.</p>
+          </div>
+          <div class="step">
+            <h3>Private by design</h3>
+            <p>No cookies, no tracking, no account. The calculations happen on your device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section sources">
+      <div class="wrap">
+        <h2>Official sources we rely on</h2>
+{{block:sources}}
+        <p class="disclaimer">Zindabaagh provides general information, not legal advice. Immigration rules change. Always confirm requirements with the responsible German authority or mission before you apply.</p>
+      </div>
+    </section>
