@@ -91,7 +91,7 @@ reads the stored file and deletes it unless the content really is PDF/JPG/PNG/WE
 and a PDF contains no active content (`/JavaScript`, `/Launch`, `/EmbeddedFile`, …). Every 30 minutes it
 removes empty records left by refused uploads, and documents older than 2 hours that no lead points to
 (abandoned forms, bots, and the documents of leads you deleted). It also checks **Cloudflare Turnstile** on
-every public lead: the form sends the token as `captcha`, the hook verifies it with Cloudflare
+every public lead and contact message (collections `leads` and `messages`): the form sends the token as `captcha`, the hook verifies it with Cloudflare
 (`TURNSTILE_SECRET`, hostname must be zindabaagh.com / www) and removes it before saving; a failed check
 answers 400. Logged-in users and API tokens are not checked. Without `TURNSTILE_SECRET` the check is off,
 and if Cloudflare cannot be reached the lead is accepted (logged). Directus itself enforces `FILES_MAX_UPLOAD_SIZE=10mb` and a
@@ -128,6 +128,7 @@ container, and start the service again. **A restore has not been tested yet.**
 | `hello@zindabaagh.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (rule added 2026-11-12) |
 | `support@`, `privacy@zindabaagh.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (added for ExamKlar) |
 | Everything else @zindabaagh.com | in | dropped (catch-all disabled) |
+| Contact form notification | out | Flow "Notify: new contact message" → Brevo → zindabaagh@gmail.com, Reply-To = the sender (added 2026-11-12) |
 | Lead notification | out | Flow "Notify: new lead" → Brevo → **zindabaagh@gmail.com directly** (since 2026-11-12, not via hello@), Reply-To = the visitor's e-mail |
 | `noreply@mail.zindabaagh.com` | out | Directus → Brevo SMTP (`smtp-relay.brevo.com:587`); domain authenticated in Brevo (DKIM/DMARC in Cloudflare) |
 | Cal.com | bookings | 1-on-1 calls with online payment; linked from `/services` and the home page |

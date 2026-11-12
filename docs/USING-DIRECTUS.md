@@ -9,7 +9,8 @@ Where every enquiry, e-mail and evaluation request arrives, and how to work with
 | What | Where you see it | Notification |
 |---|---|---|
 | **Free evaluation requests** (incl. uploaded documents) | Directus → **Leads** (https://cms.zindabaagh.com/admin/content/leads) | E-mail "New free evaluation: <name> (<goal>)" straight to zindabaagh@gmail.com; **Reply** answers the visitor |
-| E-mails to hello@zindabaagh.com (contact links on the site, Impressum) | Gmail **zindabaagh@gmail.com** | Gmail |
+| **Contact form messages** (zindabaagh.com/contact) | Directus → **Messages** (https://cms.zindabaagh.com/admin/content/messages); set **message_status** new → answered → closed | E-mail "Contact form: <name> (<topic>)" to zindabaagh@gmail.com; **Reply** answers the sender |
+| E-mails to hello@zindabaagh.com (shown on the contact page and in the Impressum) | Gmail **zindabaagh@gmail.com** | Gmail |
 | E-mails to support@ / privacy@zindabaagh.com | Gmail **zindabaagh@gmail.com** | Gmail |
 | Form requests when the CMS was down (fallback) | Gmail, as an e-mail from the visitor's own address with the answers in the text | Gmail |
 | **1-on-1 bookings and payments** | Cal.com dashboard (https://app.cal.com) | Cal.com e-mails |

@@ -95,6 +95,19 @@ const collections = [
       long("notes", { note: "Your own notes. Not visible to the visitor." }),
     ],
   },
+  {
+    collection: "messages",
+    meta: { icon: "mail", note: "Messages from the contact form at zindabaagh.com/contact.", display_template: "{{name}} ({{topic}})", sort_field: null },
+    fields: [
+      choice("message_status", ["new", "answered", "closed"], { default: "new" }),
+      created(),
+      text("name", { required: true }), text("email", { required: true }),
+      choice("topic", ["general", "client", "examklar", "partnership", "privacy", "other"]),
+      long("message", { required: true }), text("source", { width: "full" }),
+      { field: "consent", type: "boolean", meta: { interface: "boolean", width: "half" }, schema: { default_value: false } },
+      long("notes", { note: "Your own notes. Not visible to the visitor." }),
+    ],
+  },
 ];
 
 for (const c of collections) {
@@ -129,6 +142,11 @@ await allow(publicPolicy, "directus_files", "read");
 await allow(publicPolicy, "leads", "create", {
   fields: ["name", "email", "whatsapp", "country", "goal", "service", "qualification", "field", "experience", "timeline", "german", "english", "message", "source", "consent"],
   validation: { _and: [{ consent: { _eq: true } }, { email: { _contains: "@" } }] },
+});
+// Same for the contact form.
+await allow(publicPolicy, "messages", "create", {
+  fields: ["name", "email", "topic", "message", "source", "consent"],
+  validation: { _and: [{ consent: { _eq: true } }, { email: { _contains: "@" } }, { message: { _nempty: true } }] },
 });
 
 // ---- guide publisher (for scripts and the reel skill) ----

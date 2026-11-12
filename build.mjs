@@ -262,7 +262,7 @@ ${page.body}
   await mkdir(out, { recursive: true });
   await cp(join(root, "public"), out, { recursive: true });
   await mkdir(join(out, "js"), { recursive: true });
-  const config = { email: site.email, leadEndpoint: cmsUrl ? `${cmsUrl}/items/leads` : "", filesEndpoint: cmsUrl ? `${cmsUrl}/files` : "", uploadFolder: site.cms?.uploadFolder ?? "", turnstileSiteKey: site.cms?.turnstileSiteKey ?? "" };
+  const config = { email: site.email, leadEndpoint: cmsUrl ? `${cmsUrl}/items/leads` : "", messageEndpoint: cmsUrl ? `${cmsUrl}/items/messages` : "", filesEndpoint: cmsUrl ? `${cmsUrl}/files` : "", uploadFolder: site.cms?.uploadFolder ?? "", turnstileSiteKey: site.cms?.turnstileSiteKey ?? "" };
   await writeFile(join(out, "js/facts.js"), `window.ZB_FACTS = ${JSON.stringify(site.facts)};\nwindow.ZB_SITE = ${JSON.stringify(config)};\n`);
 
   // Changes on every build, so browsers fetch new CSS and JS after a deploy instead of using their cached copy.

@@ -1,6 +1,7 @@
-// Creates the two Directus automations (flows). Safe to run again: existing flows are updated.
+// Creates the three Directus automations (flows). Safe to run again: existing flows are updated.
 //
 //   1. "Notify: new lead"   e-mails you every new free evaluation request.
+//   1b. "Notify: new contact message"  e-mails you every message from the contact form.
 //   2. "Rebuild website"    asks Coolify to redeploy zindabaagh.com when a guide, page or the
 //                           site settings are created, changed or deleted.
 //
@@ -66,6 +67,21 @@ await flow("Notify: new lead", "person_add", { type: "action", scope: ["items.cr
   },
 });
 console.log(`  lead e-mails go to ${to}`);
+
+await flow("Notify: new contact message", "mail", { type: "action", scope: ["items.create"], collections: ["messages"] }, {
+  key: "mail_message", name: "E-mail the message", type: "mail",
+  options: {
+    to: [to], replyTo: ["{{$trigger.payload.email}}"], type: "markdown",
+    subject: "Contact form: {{$trigger.payload.name}} ({{$trigger.payload.topic}})",
+    body: [
+      "**{{$trigger.payload.name}}** wrote through the contact form.", "",
+      "- E-mail: {{$trigger.payload.email}}", "- Topic: {{$trigger.payload.topic}}", "- Came from: {{$trigger.payload.source}}", "",
+      "Message:", "", "{{$trigger.payload.message}}", "",
+      "Reply to this e-mail to answer the sender.", "",
+      `Open in the CMS: ${url}/admin/content/messages/{{$trigger.key}}`,
+    ].join("\n"),
+  },
+});
 
 if (env.COOLIFY_DEPLOY_WEBHOOK && env.COOLIFY_TOKEN) {
   await flow("Rebuild website", "rocket_launch", { type: "action", scope: ["items.create", "items.update", "items.delete"], collections: ["guides", "pages", "site"] }, {

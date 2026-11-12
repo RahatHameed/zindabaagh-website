@@ -15,9 +15,9 @@ Daily use: [../docs/USING-DIRECTUS.md](../docs/USING-DIRECTUS.md).
 | `extensions/upload-guard/` | Directus hook: checks uploads into "Lead uploads", removes fakes, empty records and unused documents; verifies Cloudflare Turnstile on leads | via compose |
 | `backup/backup.sh` | Nightly encrypted SQLite backup to R2 (runs in the `backup` container) | via compose |
 | `env.example` | All Directus settings with explanations (reference) | – |
-| `setup.mjs` | Collections `guides`, `pages`, `site`, `leads`; public permissions; Guide publisher user + `CMS_TOKEN` | once / safe to re-run |
+| `setup.mjs` | Collections `guides`, `pages`, `site`, `leads`, `messages` (contact form); public permissions; Guide publisher user + `CMS_TOKEN` | once / safe to re-run |
 | `setup-uploads.mjs` | Folders Public + Lead uploads, upload permissions, lead file fields | once / safe to re-run |
-| `flows.mjs` | Flows "Notify: new lead" and "Rebuild website" | after token changes |
+| `flows.mjs` | Flows "Notify: new lead", "Notify: new contact message" and "Rebuild website" | after token changes |
 | `publish-guide.mjs` | Create/update a guide from a JSON + HTML file (used by the reel skill) | per guide |
 
 All scripts read `CMS_URL`, `CMS_ADMIN_TOKEN`, `CMS_TOKEN`, `COOLIFY_DEPLOY_WEBHOOK`, `COOLIFY_TOKEN`,

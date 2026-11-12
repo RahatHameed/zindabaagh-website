@@ -1,0 +1,45 @@
+---
+{
+  "path": "/contact",
+  "title": "Contact | Zindabaagh",
+  "description": "Write to Zindabaagh: questions about the website, our services, ExamKlar or working together.",
+  "noindex": true,
+  "scripts": ["/js/contact.js"]
+}
+---
+    <section class="page-head">
+      <div class="wrap">
+        <p class="crumbs"><a href="/">Home</a> / Contact</p>
+        <h1>Contact</h1>
+        <p class="lead">A question about the site, a service you booked, ExamKlar or working together? Write to us here. We usually reply within two working days.</p>
+      </div>
+    </section>
+    <section class="section" style="padding-top:24px">
+      <div class="wrap form-wrap">
+        <p class="disclaimer" style="margin:0 0 18px">Want to know which route to Germany fits <em>you</em>? Use the <a href="/free-evaluation?source=contact">free evaluation form</a> instead. It asks the right questions, so we can give you a useful answer the first time.</p>
+        <form class="panel" id="contact-form" novalidate>
+          <div class="row2">
+            <label class="field"><span>Your name</span><input name="name" type="text" autocomplete="name" required maxlength="120"></label>
+            <label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="email" required maxlength="200"></label>
+          </div>
+          <label class="field">
+            <span>What is it about?</span>
+            <select name="topic" required>
+              <option value="general">General question</option>
+              <option value="client">A service I booked</option>
+              <option value="examklar">ExamKlar (German exam practice)</option>
+              <option value="partnership">Partnership or collaboration</option>
+              <option value="privacy">My data (privacy request)</option>
+              <option value="other">Something else</option>
+            </select>
+          </label>
+          <label class="field"><span>Your message</span><textarea name="message" required maxlength="4000" rows="7" placeholder="Please do not send passport or ID details here."></textarea></label>
+          <label class="hp" aria-hidden="true">Leave this empty <input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+          <label class="check"><input type="checkbox" name="consent" required><span>I agree that Zindabaagh stores this message to answer it and contacts me by e-mail about it. <a href="/datenschutz.html" target="_blank">Privacy policy</a></span></label>
+          <div id="turnstile-box" class="turnstile-box"></div>
+          <p style="margin:18px 0 0"><button class="btn" type="submit" id="contact-submit">Send message</button></p>
+          <p class="form-note" id="contact-note" role="status" aria-live="polite"></p>
+        </form>
+        <p style="margin-top:14px;color:var(--muted)">Prefer e-mail? Write to <a href="mailto:hello@zindabaagh.com">hello@zindabaagh.com</a>.</p>
+      </div>
+    </section>

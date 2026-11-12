@@ -97,9 +97,9 @@ services:
             if (!leadFolder) logger.warn("upload-guard: LEAD_UPLOAD_FOLDER is not set, uploads are NOT checked");
             if (!env.TURNSTILE_SECRET) logger.warn("upload-guard: TURNSTILE_SECRET is not set, leads are accepted without the Turnstile check");
 
-            // Public lead submissions must pass Cloudflare Turnstile. Logged-in users and API tokens
+            // Public lead and contact-message submissions must pass Cloudflare Turnstile. Logged-in users and API tokens
             // (the admin panel, scripts) are not checked. The token is removed before the lead is saved.
-            filter("leads.items.create", async (payload, meta, context) => {
+            const checkTurnstile = async (payload, meta, context) => {
               const token = payload && payload.captcha;
               if (payload && "captcha" in payload) delete payload.captcha;
               const secret = env.TURNSTILE_SECRET;
@@ -113,15 +113,17 @@ services:
                 result = await res.json();
               } catch (error) {
                 // Cloudflare unreachable: accept rather than lose a real request.
-                logger.warn("upload-guard: Turnstile could not be reached, lead accepted unchecked: " + error.message);
+                logger.warn("upload-guard: Turnstile could not be reached, form accepted unchecked: " + error.message);
                 return payload;
               }
               if (!result.success || !SITE_HOSTS.includes(result.hostname)) {
-                logger.warn("upload-guard: lead refused, Turnstile failed (" + ((result["error-codes"] || []).join(",") || result.hostname) + ")");
+                logger.warn("upload-guard: form refused, Turnstile failed (" + ((result["error-codes"] || []).join(",") || result.hostname) + ")");
                 throw refuse("Security check failed. Please complete the security check again and send.");
               }
               return payload;
-            });
+            };
+            filter("leads.items.create", checkTurnstile);
+            filter("messages.items.create", checkTurnstile);
 
             // Every 30 minutes:
             // 1. An upload that is refused half-way (for example over 10 MB) leaves an empty file record
