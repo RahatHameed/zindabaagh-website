@@ -1,0 +1,88 @@
+services:
+  directus:
+    image: 'directus/directus:11'
+    environment:
+      - SERVICE_URL_DIRECTUS_8055
+      - 'PUBLIC_URL=https://cms.zindabaagh.com'
+      - 'SECRET=${SERVICE_BASE64_64_SECRET}'
+      - 'ADMIN_EMAIL=${ADMIN_EMAIL:-hello@zindabaagh.com}'
+      - 'ADMIN_PASSWORD=${SERVICE_PASSWORD_ADMIN}'
+      - DB_CLIENT=sqlite3
+      - DB_FILENAME=/directus/database/data.db
+      - STORAGE_LOCATIONS=r2
+      - STORAGE_R2_DRIVER=s3
+      - 'STORAGE_R2_KEY=${R2_ACCESS_KEY_ID:-not-set}'
+      - 'STORAGE_R2_SECRET=${R2_SECRET_ACCESS_KEY:-not-set}'
+      - 'STORAGE_R2_BUCKET=${R2_BUCKET:-zindabaagh-cms}'
+      - STORAGE_R2_REGION=auto
+      - 'STORAGE_R2_ENDPOINT=${R2_ENDPOINT:-https://ACCOUNT_ID.r2.cloudflarestorage.com}'
+      - STORAGE_R2_FORCE_PATH_STYLE=true
+      - CORS_ENABLED=true
+      - 'CORS_ORIGIN=https://zindabaagh.com,https://www.zindabaagh.com'
+      - RATE_LIMITER_ENABLED=true
+      - RATE_LIMITER_POINTS=50
+      - RATE_LIMITER_DURATION=10
+      - 'EMAIL_TRANSPORT=${EMAIL_TRANSPORT:-sendmail}'
+      - EMAIL_SMTP_HOST=smtp-relay.brevo.com
+      - EMAIL_SMTP_PORT=587
+      - 'EMAIL_SMTP_USER=${BREVO_SMTP_USER:-not-set}'
+      - 'EMAIL_SMTP_PASSWORD=${BREVO_SMTP_KEY:-not-set}'
+      - 'EMAIL_FROM=Zindabaagh <noreply@mail.zindabaagh.com>'
+      - TELEMETRY=false
+      - WEBSOCKETS_ENABLED=false
+      - FILES_MAX_UPLOAD_SIZE=10mb
+      - 'FILES_MIME_TYPE_ALLOW_LIST=application/pdf,image/jpeg,image/png,image/webp,image/gif,image/avif'
+      - LEAD_UPLOAD_FOLDER=6d62ee43-5da3-45b7-abf9-e2135573e083
+      - EXTENSIONS_AUTO_RELOAD=false
+    volumes:
+      - 'directus-database:/directus/database'
+      -
+        type: bind
+        source: ./extensions/upload-guard/package.json
+        target: /directus/extensions/upload-guard/package.json
+        content: |
+{{UPLOAD_GUARD_PACKAGE}}
+      -
+        type: bind
+        source: ./extensions/upload-guard/index.js
+        target: /directus/extensions/upload-guard/index.js
+        content: |
+{{UPLOAD_GUARD_INDEX}}
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-q'
+        - '--spider'
+        - 'http://127.0.0.1:8055/server/ping'
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+  backup:
+    image: 'alpine:3.20'
+    restart: unless-stopped
+    environment:
+      - 'R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID:-not-set}'
+      - 'R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-not-set}'
+      - 'R2_BUCKET=${R2_BUCKET:-zindabaagh-cms}'
+      - 'R2_ENDPOINT=${R2_ENDPOINT:-https://ACCOUNT_ID.r2.cloudflarestorage.com}'
+      - 'BACKUP_PASSPHRASE=${SERVICE_PASSWORD_64_BACKUP}'
+      - KEEP_DAYS=30
+      - TZ=Europe/Berlin
+    volumes:
+      - 'directus-database:/data'
+    entrypoint:
+      - /bin/sh
+      - '-c'
+    command:
+      - 'apk add --no-cache sqlite aws-cli openssl tzdata > /dev/null && echo {{BACKUP_SCRIPT_BASE64}} | base64 -d > /usr/local/bin/backup.sh && chmod +x /usr/local/bin/backup.sh && (backup.sh || true) && echo "15 3 * * * /usr/local/bin/backup.sh > /proc/1/fd/1 2>&1" | crontab - && exec crond -f -l 8'
+    healthcheck:
+      test:
+        - CMD
+        - pgrep
+        - crond
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 180s

@@ -1,0 +1,180 @@
+services:
+  directus:
+    image: 'directus/directus:11'
+    environment:
+      - SERVICE_URL_DIRECTUS_8055
+      - 'PUBLIC_URL=https://cms.zindabaagh.com'
+      - 'SECRET=${SERVICE_BASE64_64_SECRET}'
+      - 'ADMIN_EMAIL=${ADMIN_EMAIL:-hello@zindabaagh.com}'
+      - 'ADMIN_PASSWORD=${SERVICE_PASSWORD_ADMIN}'
+      - DB_CLIENT=sqlite3
+      - DB_FILENAME=/directus/database/data.db
+      - STORAGE_LOCATIONS=r2
+      - STORAGE_R2_DRIVER=s3
+      - 'STORAGE_R2_KEY=${R2_ACCESS_KEY_ID:-not-set}'
+      - 'STORAGE_R2_SECRET=${R2_SECRET_ACCESS_KEY:-not-set}'
+      - 'STORAGE_R2_BUCKET=${R2_BUCKET:-zindabaagh-cms}'
+      - STORAGE_R2_REGION=auto
+      - 'STORAGE_R2_ENDPOINT=${R2_ENDPOINT:-https://ACCOUNT_ID.r2.cloudflarestorage.com}'
+      - STORAGE_R2_FORCE_PATH_STYLE=true
+      - CORS_ENABLED=true
+      - 'CORS_ORIGIN=https://zindabaagh.com,https://www.zindabaagh.com'
+      - RATE_LIMITER_ENABLED=true
+      - RATE_LIMITER_POINTS=50
+      - RATE_LIMITER_DURATION=10
+      - 'EMAIL_TRANSPORT=${EMAIL_TRANSPORT:-sendmail}'
+      - EMAIL_SMTP_HOST=smtp-relay.brevo.com
+      - EMAIL_SMTP_PORT=587
+      - 'EMAIL_SMTP_USER=${BREVO_SMTP_USER:-not-set}'
+      - 'EMAIL_SMTP_PASSWORD=${BREVO_SMTP_KEY:-not-set}'
+      - 'EMAIL_FROM=Zindabaagh <noreply@mail.zindabaagh.com>'
+      - TELEMETRY=false
+      - WEBSOCKETS_ENABLED=false
+      - FILES_MAX_UPLOAD_SIZE=10mb
+      - 'FILES_MIME_TYPE_ALLOW_LIST=application/pdf,image/jpeg,image/png,image/webp,image/gif,image/avif'
+      - LEAD_UPLOAD_FOLDER=6d62ee43-5da3-45b7-abf9-e2135573e083
+      - EXTENSIONS_AUTO_RELOAD=false
+    volumes:
+      - 'directus-database:/directus/database'
+      -
+        type: bind
+        source: ./extensions/upload-guard/package.json
+        target: /directus/extensions/upload-guard/package.json
+        content: |
+          {
+            "name": "directus-extension-upload-guard",
+            "version": "1.0.0",
+            "type": "module",
+            "directus:extension": {
+              "type": "hook",
+              "path": "index.js",
+              "source": "index.js",
+              "host": "^11.0.0"
+            }
+          }
+      -
+        type: bind
+        source: ./extensions/upload-guard/index.js
+        target: /directus/extensions/upload-guard/index.js
+        content: |
+          // Directus hook "upload-guard": checks every file uploaded into the "Lead uploads" folder and
+          // deletes it at once unless it really is a PDF, JPG, PNG or WEBP. The browser-declared type
+          // and the file name are not trusted: the first bytes of the stored file are checked ("magic
+          // numbers"), and PDFs that contain scripts, launch actions or embedded files are rejected.
+          //
+          // Deployed into the container as /directus/extensions/upload-guard/index.js through the Coolify
+          // compose file (see cms/README.md). Coolify treats a dollar sign as a variable, so this file
+          // must not contain one.
+          const RULES = {
+            "application/pdf": { ext: [".pdf"], ok: (b) => b.subarray(0, 5).toString("latin1") === "%PDF-" },
+            "image/jpeg": { ext: [".jpg", ".jpeg"], ok: (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
+            "image/png": { ext: [".png"], ok: (b) => b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) },
+            "image/webp": { ext: [".webp"], ok: (b) => b.subarray(0, 4).toString("latin1") === "RIFF" && b.subarray(8, 12).toString("latin1") === "WEBP" },
+          };
+          // Active content in a PDF. Benign CVs and transcripts do not need any of it.
+          const PDF_DANGER = ["/JavaScript", "/JS ", "/JS(", "/JS<", "/Launch", "/EmbeddedFile", "/RichMedia", "/XFA", "/SubmitForm", "/ImportData"];
+          const MAX_BYTES = 10 * 1024 * 1024;
+
+          export default ({ action, schedule }, { services, getSchema, logger, env }) => {
+            const leadFolder = env.LEAD_UPLOAD_FOLDER;
+            if (!leadFolder) logger.warn("upload-guard: LEAD_UPLOAD_FOLDER is not set, uploads are NOT checked");
+
+            // An upload that is refused half-way (for example over 10 MB) leaves an empty file record with
+            // no stored file. Every 30 minutes remove such records older than 15 minutes. They are removed
+            // as plain records because there is no stored file to delete.
+            schedule("*/30 * * * *", async () => {
+              if (!leadFolder) return;
+              const schema = await getSchema();
+              const records = new services.ItemsService("directus_files", { schema });
+              const cutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+              const empty = await records.readByQuery({
+                filter: { _and: [{ folder: { _eq: leadFolder } }, { filesize: { _null: true } }, { created_on: { _lt: cutoff } }] },
+                fields: ["id"], limit: 500,
+              });
+              if (empty.length) {
+                await records.deleteMany(empty.map((row) => row.id));
+                logger.info("upload-guard: removed " + empty.length + " empty upload record(s)");
+              }
+            });
+
+            action("files.upload", async (meta) => {
+              const payload = meta.payload || {};
+              const key = meta.key;
+              if (!leadFolder || payload.folder !== leadFolder) return;
+
+              const schema = await getSchema();
+              const files = new services.FilesService({ schema });
+              let reason = "";
+              try {
+                const rule = RULES[payload.type];
+                const name = String(payload.filename_download || "").toLowerCase();
+                if (!rule) reason = "type " + payload.type + " is not allowed";
+                else if (!rule.ext.some((ending) => name.endsWith(ending))) reason = "file name " + name + " does not match " + payload.type;
+
+                if (!reason) {
+                  const assets = new services.AssetsService({ schema });
+                  const asset = await assets.getAsset(key);
+                  const chunks = [];
+                  let size = 0;
+                  for await (const chunk of asset.stream) {
+                    chunks.push(chunk);
+                    size += chunk.length;
+                    if (size > MAX_BYTES) break;
+                  }
+                  const data = Buffer.concat(chunks);
+                  if (size > MAX_BYTES) reason = "larger than 10 MB";
+                  else if (!rule.ok(data)) reason = "content is not a real " + payload.type;
+                  else if (payload.type === "application/pdf") {
+                    const text = data.toString("latin1");
+                    const hit = PDF_DANGER.find((word) => text.includes(word));
+                    if (hit) reason = "PDF contains active content (" + hit.trim() + ")";
+                  }
+                }
+              } catch (error) {
+                reason = "could not be checked: " + error.message;
+              }
+
+              if (reason) {
+                await files.deleteOne(key);
+                logger.warn("upload-guard: deleted upload " + key + " because it " + (reason.startsWith("could") ? reason : "is not allowed: " + reason));
+              }
+            });
+          };
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-q'
+        - '--spider'
+        - 'http://127.0.0.1:8055/server/ping'
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+  backup:
+    image: 'alpine:3.20'
+    restart: unless-stopped
+    environment:
+      - 'R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID:-not-set}'
+      - 'R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-not-set}'
+      - 'R2_BUCKET=${R2_BUCKET:-zindabaagh-cms}'
+      - 'R2_ENDPOINT=${R2_ENDPOINT:-https://ACCOUNT_ID.r2.cloudflarestorage.com}'
+      - 'BACKUP_PASSPHRASE=${SERVICE_PASSWORD_64_BACKUP}'
+      - KEEP_DAYS=30
+      - TZ=Europe/Berlin
+    volumes:
+      - 'directus-database:/data'
+    entrypoint:
+      - /bin/sh
+      - '-c'
+    command:
+      - 'apk add --no-cache sqlite aws-cli openssl tzdata > /dev/null && echo IyEvYmluL3NoCiMgTmlnaHRseSBiYWNrdXAgb2YgdGhlIERpcmVjdHVzIGRhdGFiYXNlIChTUUxpdGUpIHRvIENsb3VkZmxhcmUgUjIuCiMgUnVucyBpbiB0aGUgImJhY2t1cCIgY29udGFpbmVyIG9mIHRoZSBDb29saWZ5IHNlcnZpY2UgemluZGFiYWFnaC1jbXMsIHdoaWNoIHNoYXJlcyB0aGUKIyBkYXRhYmFzZSB2b2x1bWUgd2l0aCBEaXJlY3R1cyBhdCAvZGF0YS4gRWFjaCBiYWNrdXAgaXMgYSBjb25zaXN0ZW50IFNRTGl0ZSBjb3B5LAojIGludGVncml0eS1jaGVja2VkLCBnemlwcGVkIGFuZCBlbmNyeXB0ZWQgd2l0aCBCQUNLVVBfUEFTU1BIUkFTRSBiZWZvcmUgdXBsb2FkLgojCiMgRW52OiBSMl9BQ0NFU1NfS0VZX0lELCBSMl9TRUNSRVRfQUNDRVNTX0tFWSwgUjJfQlVDS0VULCBSMl9FTkRQT0lOVCwgQkFDS1VQX1BBU1NQSFJBU0UsCiMgICAgICBLRUVQX0RBWVMgKGRlZmF1bHQgMzApCnNldCAtZXUKCnRzPSQoZGF0ZSArJVktJW0tJWRfJUglTSkKbmFtZT0iZGlyZWN0dXMtJHRzLmRiLmd6LmVuYyIKd29yaz0kKG1rdGVtcCAtZCkKdHJhcCAncm0gLXJmICIkd29yayInIEVYSVQKCmV4cG9ydCBBV1NfQUNDRVNTX0tFWV9JRD0iJFIyX0FDQ0VTU19LRVlfSUQiIEFXU19TRUNSRVRfQUNDRVNTX0tFWT0iJFIyX1NFQ1JFVF9BQ0NFU1NfS0VZIiBBV1NfREVGQVVMVF9SRUdJT049YXV0bwojIFIyIGRvZXMgbm90IGFjY2VwdCB0aGUgbmV3ZXIgZGVmYXVsdCBjaGVja3N1bXMgb2YgYXdzLWNsaTsgb25seSBzZW5kIHRoZW0gd2hlbiByZXF1aXJlZC4KZXhwb3J0IEFXU19SRVFVRVNUX0NIRUNLU1VNX0NBTENVTEFUSU9OPXdoZW5fcmVxdWlyZWQgQVdTX1JFU1BPTlNFX0NIRUNLU1VNX1ZBTElEQVRJT049d2hlbl9yZXF1aXJlZApzMygpIHsgYXdzIHMzICIkQCIgLS1lbmRwb2ludC11cmwgIiRSMl9FTkRQT0lOVCIgLS1vbmx5LXNob3ctZXJyb3JzOyB9CgojIENvbnNpc3RlbnQgY29weSB3aGlsZSBEaXJlY3R1cyBrZWVwcyBydW5uaW5nIChTUUxpdGUgb25saW5lIGJhY2t1cCBBUEkpLgpzcWxpdGUzIC9kYXRhL2RhdGEuZGIgIi5iYWNrdXAgJyR3b3JrL2RhdGEuZGInIgpjaGVjaz0kKHNxbGl0ZTMgIiR3b3JrL2RhdGEuZGIiICJQUkFHTUEgaW50ZWdyaXR5X2NoZWNrOyIpClsgIiRjaGVjayIgPSAib2siIF0gfHwgeyBlY2hvICJiYWNrdXAgRkFJTEVEOiBpbnRlZ3JpdHkgY2hlY2sgc2F5czogJGNoZWNrIjsgZXhpdCAxOyB9CgpnemlwIC05ICIkd29yay9kYXRhLmRiIgpvcGVuc3NsIGVuYyAtYWVzLTI1Ni1jYmMgLXBia2RmMiAtaXRlciAyMDAwMDAgLXNhbHQgLXBhc3MgZW52OkJBQ0tVUF9QQVNTUEhSQVNFIFwKICAtaW4gIiR3b3JrL2RhdGEuZGIuZ3oiIC1vdXQgIiR3b3JrLyRuYW1lIgoKczMgY3AgIiR3b3JrLyRuYW1lIiAiczM6Ly8kUjJfQlVDS0VUL2JhY2t1cHMvJG5hbWUiCmVjaG8gImJhY2t1cCBvazogYmFja3Vwcy8kbmFtZSAoJCh3YyAtYyA8ICIkd29yay8kbmFtZSIpIGJ5dGVzKSIKCiMgRGVsZXRlIGJhY2t1cHMgb2xkZXIgdGhhbiBLRUVQX0RBWVMgKGZpbGUgbmFtZXMgc3RhcnQgd2l0aCB0aGUgZGF0ZSkuCmN1dG9mZj0kKGRhdGUgLWQgIkAkKCggJChkYXRlICslcykgLSAke0tFRVBfREFZUzotMzB9ICogODY0MDAgKSkiICslWSVtJWQpCmF3cyBzMyBscyAiczM6Ly8kUjJfQlVDS0VUL2JhY2t1cHMvIiAtLWVuZHBvaW50LXVybCAiJFIyX0VORFBPSU5UIiB8IGF3ayAne3ByaW50ICQ0fScgfCB3aGlsZSByZWFkIC1yIGY7IGRvCiAgZD0kKGVjaG8gIiRmIiB8IHNlZCAtbiAncy9eZGlyZWN0dXMtXChbMC05XVx7NFx9XCktXChbMC05XVx7Mlx9XCktXChbMC05XVx7Mlx9XClfLiovXDFcMlwzL3AnKQogIGlmIFsgLW4gIiRkIiBdICYmIFsgIiRkIiAtbHQgIiRjdXRvZmYiIF07IHRoZW4gczMgcm0gInMzOi8vJFIyX0JVQ0tFVC9iYWNrdXBzLyRmIiAmJiBlY2hvICJkZWxldGVkIG9sZCBiYWNrdXA6ICRmIjsgZmkKZG9uZQo= | base64 -d > /usr/local/bin/backup.sh && chmod +x /usr/local/bin/backup.sh && (backup.sh || true) && echo "15 3 * * * /usr/local/bin/backup.sh > /proc/1/fd/1 2>&1" | crontab - && exec crond -f -l 8'
+    healthcheck:
+      test:
+        - CMD
+        - pgrep
+        - crond
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 180s

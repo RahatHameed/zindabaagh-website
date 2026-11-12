@@ -262,11 +262,13 @@
       "title": "1-on-1 call",
       "text": "A video call about your own case: your options, your documents, your next three steps. Bring every question you have.",
       "points": [
-        "One call, fully about your situation",
+        "One video call, fully about your situation",
+        "Pick a time that suits you and pay online when booking",
         "A written summary of your next steps afterwards"
       ],
-      "href": "/free-evaluation?service=one-on-one",
-      "cta": "Ask about a call"
+      "href": "https://app.cal.com/discover/rahat-hameed-1n1",
+      "cta": "Book a call",
+      "external": true
     },
     {
       "slug": "examklar",
@@ -366,6 +368,7 @@
     }
   ],
   "cms": {
-    "url": "https://cms.zindabaagh.com"
+    "url": "https://cms.zindabaagh.com",
+    "uploadFolder": "6d62ee43-5da3-45b7-abf9-e2135573e083"
   }
 }

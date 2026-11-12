@@ -247,6 +247,13 @@ ${page.body}
         <a class="btn btn-light" href="/#tools">Browse the tools</a>`
       }
       </aside>
+      <aside class="guide-lead">
+        <div>
+          <h2>Want someone to look at your case?</h2>
+          <p>Tell us about your education, work and goal. We reply with the route that fits you and your first steps. Free, no obligation.</p>
+        </div>
+        <a class="btn" href="/free-evaluation?source=guide-${encodeURIComponent(page.path.split("/").pop())}">Get a free evaluation</a>
+      </aside>
       <p class="disclaimer">General information, not legal advice. Rules change: confirm your case with the responsible German authority or mission. Questions? Write to <a href="mailto:${site.email}">${site.email}</a>.</p>
     </article>`;
   };
@@ -255,7 +262,7 @@ ${page.body}
   await mkdir(out, { recursive: true });
   await cp(join(root, "public"), out, { recursive: true });
   await mkdir(join(out, "js"), { recursive: true });
-  const config = { email: site.email, leadEndpoint: cmsUrl ? `${cmsUrl}/items/leads` : "" };
+  const config = { email: site.email, leadEndpoint: cmsUrl ? `${cmsUrl}/items/leads` : "", filesEndpoint: cmsUrl ? `${cmsUrl}/files` : "", uploadFolder: site.cms?.uploadFolder ?? "" };
   await writeFile(join(out, "js/facts.js"), `window.ZB_FACTS = ${JSON.stringify(site.facts)};\nwindow.ZB_SITE = ${JSON.stringify(config)};\n`);
 
   // Changes on every build, so browsers fetch new CSS and JS after a deploy instead of using their cached copy.

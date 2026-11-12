@@ -84,12 +84,22 @@
               </select>
             </label>
           </div>
+          <fieldset class="uploads" id="uploads" hidden>
+            <legend>Your documents for the study visa evaluation</legend>
+            <small>Upload what you have, so we can check your chances properly. PDF, JPG, PNG or WEBP, up to 10 MB each. A scan or a clear phone photo is fine. Only we can see them.</small>
+            <div class="row2" style="margin-top:12px">
+              <label class="field"><span>📄 IELTS or other English certificate (if you have it)</span><input name="file_ielts" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></label>
+              <label class="field"><span>📄 CV</span><input name="file_cv" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></label>
+              <label class="field"><span>📄 Degree (or provisional certificate)</span><input name="file_degree" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></label>
+              <label class="field"><span>📄 Transcript (mark sheets)</span><input name="file_transcript" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></label>
+            </div>
+          </fieldset>
           <label class="field"><span>Anything else we should know? (optional)</span><textarea name="message" maxlength="3000" placeholder="Your budget, a refused visa, a deadline, a question..."></textarea></label>
           <label class="hp" aria-hidden="true">Leave this empty <input name="website" type="text" tabindex="-1" autocomplete="off"></label>
           <label class="check"><input type="checkbox" name="consent" required><span>I agree that Zindabaagh stores these details to answer my request and contacts me by e-mail or WhatsApp about it. I can ask for deletion at any time. <a href="/datenschutz.html" target="_blank">Privacy policy</a></span></label>
           <p style="margin:18px 0 0"><button class="btn" type="submit" id="lead-submit">Send my evaluation request</button></p>
           <div id="lead-note" role="status"></div>
         </form>
-        <p class="muted" style="margin-top:16px">Please do not send passport scans or other documents here. We only ask for those later, if you choose a service.</p>
+        <p class="muted" style="margin-top:16px">Please do not upload your passport or ID here. We only ask for those later, if you choose a service.</p>
       </div>
     </section>

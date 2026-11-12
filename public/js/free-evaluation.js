@@ -1,21 +1,44 @@
-// Free evaluation form. Sends the request to the CMS; if no CMS is configured, or it cannot be
-// reached, the visitor's e-mail program is opened with the answers filled in, so no request is lost.
+// Free evaluation form. Sends the request (and, for study, the uploaded documents) to the CMS.
+// Documents go into a private folder: the browser chooses each file's ID, so it never needs to
+// read the files back. If the CMS cannot be reached, the visitor's e-mail program is opened with
+// the answers filled in (documents can then be attached there by hand).
 (function () {
   const form = document.getElementById("lead-form"), note = document.getElementById("lead-note"), button = document.getElementById("lead-submit");
-  const { email, leadEndpoint } = window.ZB_SITE || {};
+  const uploads = document.getElementById("uploads");
+  const { email, leadEndpoint, filesEndpoint, uploadFolder } = window.ZB_SITE || {};
   const fields = ["name", "email", "whatsapp", "country", "goal", "service", "qualification", "field", "experience", "timeline", "german", "english", "message"];
+  const fileFields = ["file_ielts", "file_cv", "file_degree", "file_transcript"];
+  const MAX = 10 * 1024 * 1024;
 
-  // Arriving from a service or a guide: /free-evaluation?service=cv-review&source=blue-card-guide
+  // Arriving from a service or a guide: /free-evaluation?service=cv-review&source=guide-blue-card
   const params = new URLSearchParams(location.search);
   const wanted = params.get("service");
   if (wanted && [...form.service.options].some((o) => o.value === wanted)) form.service.value = wanted;
+  if (wanted && wanted.startsWith("study")) form.goal.value = "study";
+
+  // The document upload is shown for study requests only.
+  const isStudy = () => form.goal.value === "study" || form.service.value.startsWith("study");
+  const toggleUploads = () => { uploads.hidden = !(isStudy() && filesEndpoint && uploadFolder); };
+  form.goal.addEventListener("change", toggleUploads);
+  form.service.addEventListener("change", toggleUploads);
+  toggleUploads();
 
   const show = (kind, html) => { note.className = "form-note " + kind; note.innerHTML = html; };
 
-  function mailFallback(data) {
+  function mailFallback(data, hadFiles) {
     const body = fields.map((f) => `${f}: ${data[f] || "-"}`).join("\n");
     location.href = `mailto:${email}?subject=${encodeURIComponent("Free evaluation: " + data.name)}&body=${encodeURIComponent(body)}`;
-    show("ok", `Your e-mail program should open with your answers filled in. Press send there. If nothing opens, write to <a href="mailto:${email}">${email}</a>.`);
+    show("ok", `Your e-mail program should open with your answers filled in. ${hadFiles ? "Please attach your documents there, then " : ""}Press send. If nothing opens, write to <a href="mailto:${email}">${email}</a>.`);
+  }
+
+  async function uploadFile(file) {
+    const id = crypto.randomUUID(), fd = new FormData();
+    fd.append("id", id);
+    fd.append("folder", uploadFolder);
+    fd.append("file", file, file.name);
+    const res = await fetch(filesEndpoint, { method: "POST", body: fd });
+    if (!res.ok) throw new Error(`${file.name}: ${res.status}`);
+    return id;
   }
 
   form.addEventListener("submit", async (e) => {
@@ -26,15 +49,25 @@
     data.source = (params.get("source") || document.referrer || "direct").slice(0, 200);
     data.consent = true;
 
-    if (!leadEndpoint) { mailFallback(data); return; }
+    const files = isStudy() ? fileFields.map((f) => [f, form[f].files[0]]).filter(([, file]) => file) : [];
+    const tooBig = files.find(([, file]) => file.size > MAX);
+    if (tooBig) { show("err", `“${tooBig[1].name}” is larger than 10 MB. Please upload a smaller file (a PDF or a photo usually works).`); return; }
+
+    if (!leadEndpoint) { mailFallback(data, files.length > 0); return; }
     button.disabled = true;
     try {
+      for (let i = 0; i < files.length; i++) {
+        show("ok", `Uploading your documents (${i + 1} of ${files.length})…`);
+        data[files[i][0]] = await uploadFile(files[i][1]);
+      }
+      show("ok", "Sending your request…");
       const res = await fetch(leadEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       if (!res.ok) throw new Error("HTTP " + res.status);
       form.reset();
-      show("ok", "<strong>Thank you, we have your request.</strong> We read every form ourselves and usually reply within two working days.");
+      toggleUploads();
+      show("ok", `<strong>Thank you, we have your request${files.length ? " and your documents" : ""}.</strong> We read every request ourselves and usually reply within two working days.`);
     } catch {
-      mailFallback(data);
+      mailFallback(data, files.length > 0);
     } finally {
       button.disabled = false;
     }
