@@ -2,13 +2,27 @@
 // and a "Guide publisher" user whose token lets scripts create guides.
 // Safe to run again: existing collections, fields and permissions are left alone.
 //
-// Usage (PowerShell):
-//   $env:CMS_URL="https://cms.zindabaagh.com"; $env:CMS_ADMIN_TOKEN="<admin static token>"; node cms/setup.mjs
+// Reads CMS_URL and CMS_ADMIN_TOKEN from the environment or from the file ~/.zindabaagh-cms.env,
+// and writes the new Guide publisher token (CMS_TOKEN) into that same file. No secret is printed.
+//
+//   node cms/setup.mjs
 import { randomBytes } from "node:crypto";
+import { appendFile, readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
 
-const url = (process.env.CMS_URL || "").replace(/\/+$/, "");
-const token = process.env.CMS_ADMIN_TOKEN;
-if (!url || !token) { console.error("Set CMS_URL and CMS_ADMIN_TOKEN first."); process.exit(1); }
+const envFile = join(homedir(), ".zindabaagh-cms.env");
+const env = { ...process.env };
+try {
+  for (const line of (await readFile(envFile, "utf8")).split(/\r?\n/)) {
+    const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/);
+    if (m && !env[m[1]]) env[m[1]] = m[2];
+  }
+} catch { /* no env file: use the environment */ }
+
+const url = (env.CMS_URL || "https://cms.zindabaagh.com").replace(/\/+$/, "");
+const token = env.CMS_ADMIN_TOKEN;
+if (!token) { console.error(`CMS_ADMIN_TOKEN is missing. Put it in ${envFile} (line: CMS_ADMIN_TOKEN=...) or in the environment.`); process.exit(1); }
 
 async function api(method, path, body) {
   const res = await fetch(url + path, {
@@ -129,8 +143,8 @@ const email = "guide-publisher@zindabaagh.com";
 if (!(await api("GET", `/users?filter[email][_eq]=${email}`)).length) {
   const publisherToken = randomBytes(32).toString("base64url");
   await api("POST", "/users", { first_name: "Guide", last_name: "Publisher", email, role: role.id, token: publisherToken, status: "active" });
-  console.log("\nGuide publisher created. Save this token now, it is not shown again:\n");
-  console.log(`  CMS_TOKEN=${publisherToken}\n`);
+  await appendFile(envFile, `\nCMS_URL=${url}\nCMS_TOKEN=${publisherToken}\n`);
+  console.log(`Guide publisher created. Its token was saved as CMS_TOKEN in ${envFile}. Copy it to Bitwarden too.`);
 } else console.log("Guide publisher user already exists (token unchanged).");
 
 console.log("Done.");

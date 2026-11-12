@@ -21,7 +21,7 @@ try {
   }
 } catch { /* no env file: use the environment */ }
 
-const url = (env.CMS_URL || "").replace(/\/+$/, ""), token = env.CMS_TOKEN;
+const url = (env.CMS_URL || "https://cms.zindabaagh.com").replace(/\/+$/, ""), token = env.CMS_TOKEN;
 const file = process.argv[2], publish = process.argv.includes("--publish");
 if (!url || !token || !file) { console.error("Usage: node cms/publish-guide.mjs guide.json [--publish]   (needs CMS_URL and CMS_TOKEN)"); process.exit(1); }
 
