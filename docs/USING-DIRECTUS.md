@@ -91,6 +91,7 @@ Save → the site rebuilds by itself. If something looks wrong, change it back a
   "Finished". If it failed, open it to see why.
 - Directus → Settings → **Flows** → "Rebuild website" → the logs (right side) show whether Coolify answered.
 - By hand: Coolify → `zindabaagh-website` → Redeploy → **Force deploy (without cache)**.
+- A flow showing "resolved" does not prove the e-mail went out. Proof is an entry in Brevo → Transactional → Logs. If Brevo shows nothing, search the Directus logs in Coolify for "mail" (on 2026-11-12 the cause was `EMAIL_FROM` containing a name: "451 Invalid from").
 - No lead e-mail? Directus → Flows → "Notify: new lead" logs, then Brevo → Transactional → Logs, then Gmail spam.
 - Visitors say the form says "security check failed"? Check that `TURNSTILE_SECRET` in Coolify matches the
   widget in Cloudflare → Turnstile, and that the widget's hostname is zindabaagh.com. To switch the check off

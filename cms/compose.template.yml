@@ -27,7 +27,7 @@ services:
       - EMAIL_SMTP_PORT=587
       - 'EMAIL_SMTP_USER=${BREVO_SMTP_USER:-not-set}'
       - 'EMAIL_SMTP_PASSWORD=${BREVO_SMTP_KEY:-not-set}'
-      - 'EMAIL_FROM=Zindabaagh <noreply@mail.zindabaagh.com>'
+      - EMAIL_FROM=noreply@mail.zindabaagh.com
       - TELEMETRY=false
       - WEBSOCKETS_ENABLED=false
       - FILES_MAX_UPLOAD_SIZE=10mb
