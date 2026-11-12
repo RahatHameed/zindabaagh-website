@@ -186,7 +186,7 @@
       "icon": "🧭",
       "badge": "Free",
       "title": "Free evaluation",
-      "text": "Tell us about your education, work and goal. We tell you which route to Germany is realistic for you and what to do first.",
+      "text": "Tell us about your education, work and goal. We give you an honest first orientation: which routes people with a profile like yours usually take, and what to look at first.",
       "points": [
         "A short form, about three minutes",
         "A personal answer by e-mail or WhatsApp",
@@ -199,43 +199,43 @@
       "slug": "study-admission",
       "icon": "🎓",
       "badge": "Study",
-      "title": "Study visa: admission only",
-      "text": "We find programmes that fit your grades and budget and handle the applications until you hold an admission letter.",
+      "title": "Study in Germany: admission support",
+      "text": "We find programmes that fit your grades and budget and support you with your university applications until you hold an admission letter.",
       "points": [
         "Shortlist of matching universities and programmes",
-        "Grade conversion and document check",
-        "Applications through uni-assist or directly to the university",
-        "Motivation letter and CV review"
+        "Grade conversion and a check that your application documents are complete",
+        "Step-by-step support with uni-assist or the university portal",
+        "Feedback on your motivation letter and CV"
       ],
       "href": "/free-evaluation?service=study-admission",
-      "cta": "Ask about admission"
+      "cta": "Ask about admission support"
     },
     {
       "slug": "study-full",
       "icon": "🛂",
       "badge": "Study",
-      "title": "Study visa: full service",
-      "text": "Everything in the admission service, plus your visa file and interview preparation, until you are ready to fly.",
+      "title": "Study in Germany: full support",
+      "text": "Everything in admission support, plus help getting your documents organised for your visa appointment and practice for the interview. You submit the visa application yourself.",
       "points": [
-        "Everything in admission only",
-        "Blocked account and health insurance set-up",
-        "Complete visa document file, checked against your embassy's list",
-        "Visa interview guide and a practice interview",
+        "Everything in admission support",
+        "Help choosing and opening a blocked account and health insurance",
+        "Document checklist based on your embassy's published list, and a completeness check of your copies",
+        "Interview practice: common questions and a mock interview",
         "First-weeks plan for after you land"
       ],
       "href": "/free-evaluation?service=study-full",
-      "cta": "Ask about full service"
+      "cta": "Ask about full support"
     },
     {
       "slug": "chancenkarte",
       "icon": "⭐",
       "badge": "Work",
       "title": "Opportunity Card (Chancenkarte)",
-      "text": "We check your points, tell you how to reach six, and prepare your application file for the Opportunity Card.",
+      "text": "We go through the published points criteria with you, show where you could gain points, and help you organise your documents for your own application.",
       "points": [
-        "Points check and a plan to close the gap",
-        "Help with the recognition or ZAB statement for your qualification",
-        "Complete application file for the online portal",
+        "Self-check against the official points table and a plan to close the gap",
+        "Guidance on getting your qualification assessed (ZAB statement or recognition)",
+        "Document checklist and a completeness check before you apply in the online portal",
         "Job-search plan for your first months in Germany"
       ],
       "href": "/free-evaluation?service=chancenkarte",
