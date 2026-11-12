@@ -19,6 +19,7 @@ Database → one small SQLite file on a Coolify volume
 | `env.example` | The environment variables to enter in Coolify |
 | `setup.mjs` | Run once: creates the collections, the public permissions and the "Guide publisher" token |
 | `publish-guide.mjs` | Creates or updates a guide from a local file (by hand, or from the reel skill) |
+| `flows.mjs` | Creates the automations: lead notification e-mail, and rebuild of the website after publishing |
 
 ## State on 2026-11-12
 
@@ -48,6 +49,12 @@ Still to do:
    image uploads fail (nothing is ever written to the server disk).
 2. **Admin token:** once the flows below exist, clear the Token on your admin user in Directus and delete the
    `CMS_ADMIN_TOKEN` line from `~/.zindabaagh-cms.env`.
+- Flow "Notify: new lead" created with `flows.mjs` (2026-11-12). It sends to `hello@zindabaagh.com`, which
+  needs (a) an Email Routing rule in Cloudflare (on 2026-11-12 only `support@` and `privacy@` were forwarded,
+  everything else was dropped) and (b) the Brevo SMTP settings below. Until both exist no e-mail arrives.
+- `COOLIFY_DEPLOY_WEBHOOK` is in `~/.zindabaagh-cms.env`. For the "Rebuild website" flow, Coolify's API access must
+  be switched on (Keys & Tokens → API Tokens → Enable API Access) and a token with "deploy" permission added
+  to that file as `COOLIFY_TOKEN=`; then run `node cms/flows.mjs` again.
 3. **Until step 5 is done:** after publishing or changing something in Directus, press **Redeploy** on the
    `zindabaagh-website` app in Coolify (or push any commit) so the site rebuilds.
 4. **E-mail:** create a Brevo SMTP key named `zindabaagh-cms`; set `EMAIL_TRANSPORT=smtp`, `BREVO_SMTP_USER`
