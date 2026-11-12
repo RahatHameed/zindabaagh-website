@@ -30,24 +30,26 @@ Done:
   General page ("Directus · Admin Password"). Save it in Bitwarden.
 - The container's health check uses `/server/ping`, because `/server/health` fails until R2 is configured.
 
-Still to do, in order:
+- Content model created with `setup.mjs` on 2026-11-12: collections `guides`, `pages`, `site`, `leads`; public
+  read of published content; public create-only on `leads`; a "Guide publisher" user whose token is `CMS_TOKEN`
+  in `~/.zindabaagh-cms.env`. Checked: drafts are not public, leads cannot be read publicly, a lead without
+  consent is rejected, `publish-guide.mjs` creates a draft.
+- The `site` item holds the menu, the menu button, the tagline and the services (copied from `content/site.json`).
+  Edit them in Directus; the files are only the fallback.
+- The website reads from the CMS at build time (`cms.url` in `content/site.json`) and the free evaluation form
+  saves to `leads`.
+
+Still to do:
 
 1. **Cloudflare R2:** create the bucket `zindabaagh-cms` (EU location) and an API token with
    "Object Read & Write" for that bucket only. In Coolify → `zindabaagh-cms` → Environment Variables set
    `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` (`https://<account id>.eu.r2.cloudflarestorage.com`
-   for an EU bucket) and, if the bucket has another name, `R2_BUCKET`. Restart. Until then uploads fail
-   (nothing is ever written to the server disk).
-2. **Content model:** log in at `https://cms.zindabaagh.com/admin`, open your user (bottom left), generate a
-   **Token**, save the user. Put it in the file `C:\Users\<you>\.zindabaagh-cms.env`:
-   ```
-   CMS_ADMIN_TOKEN=...
-   ```
-   then run `node cms/setup.mjs`. It creates the collections and permissions and appends `CMS_TOKEN`
-   (the limited Guide publisher token) to that file. Afterwards clear the token on your admin user and
-   delete the `CMS_ADMIN_TOKEN` line.
-3. **Website:** in the Coolify app `zindabaagh-website`, add the variable
-   `CMS_URL=https://cms.zindabaagh.com` and tick **Build variable**. Redeploy. The free evaluation
-   form then saves to Directus instead of opening the visitor's e-mail program.
+   for an EU bucket) and, if the bucket has another name, `R2_BUCKET`. Use "Pull latest and restart". Until then
+   image uploads fail (nothing is ever written to the server disk).
+2. **Admin token:** once the flows below exist, clear the Token on your admin user in Directus and delete the
+   `CMS_ADMIN_TOKEN` line from `~/.zindabaagh-cms.env`.
+3. **Until step 5 is done:** after publishing or changing something in Directus, press **Redeploy** on the
+   `zindabaagh-website` app in Coolify (or push any commit) so the site rebuilds.
 4. **E-mail:** create a Brevo SMTP key named `zindabaagh-cms`; set `EMAIL_TRANSPORT=smtp`, `BREVO_SMTP_USER`
    and `BREVO_SMTP_KEY` in the service's environment variables. Restart.
 5. **Rebuild on publish:** in Coolify, copy the website app's **Deploy webhook** URL and create an
@@ -82,5 +84,5 @@ The guide's public address is `https://zindabaagh.com/guides/<slug>`. That is th
 
 ## Status
 
-`setup.mjs` and `publish-guide.mjs` were written against the Directus 11 API but have **not been
-run yet** (they need the admin token from step 2). Expect to fix small things on the first run.
+`setup.mjs` ran without errors on 2026-11-12. `publish-guide.mjs` was tested for creating a draft;
+publishing (`--publish`) and updating an existing guide have not been run yet.
