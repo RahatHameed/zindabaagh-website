@@ -5,7 +5,9 @@
 //
 // guide.json: { "slug": "student-visa-checklist", "title": "...", "description": "...",
 //               "body": "<p>HTML...</p>"  or  "bodyFile": "guide.html",
-//               "keyword": "VISA", "relatedTool": "visa-finder" }
+//               "keyword": "VISA", "relatedTool": "visa-finder",
+//               "coverFile": "cover.png", "coverAlt": "..." }   (optional: guide image, 1200x630,
+//               shown on the guide, its card in the guides list and in link previews)
 //
 // Needs CMS_URL and CMS_TOKEN (the "Guide publisher" token), from the environment or from
 // the file ~/.zindabaagh-cms.env (two lines: CMS_URL=... and CMS_TOKEN=...).
@@ -38,15 +40,32 @@ async function api(method, path, data) {
   return json.data;
 }
 
+// Guide image: uploaded into the CMS default folder ("Public", readable by visitors). On an update the
+// existing file is replaced in place, so its address stays the same.
+async function uploadCover(existingId) {
+  const path = resolve(dirname(file), input.coverFile);
+  const name = path.split(/[\/]/).pop();
+  const type = name.endsWith(".png") ? "image/png" : name.endsWith(".webp") ? "image/webp" : "image/jpeg";
+  const form = new FormData();
+  form.append("title", input.coverAlt || input.title);
+  form.append("file", new Blob([await readFile(path)], { type }), `guide-${input.slug}.${name.split(".").pop()}`);
+  const res = await fetch(url + (existingId ? `/files/${existingId}` : "/files"), { method: existingId ? "PATCH" : "POST", headers: { Authorization: `Bearer ${token}` }, body: form });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`cover upload: ${res.status} ${json.errors?.[0]?.message ?? ""}`);
+  return json.data.id;
+}
+
 const item = {
   slug: input.slug, title: input.title, description: input.description, body,
   keyword: input.keyword ?? null, related_tool: input.relatedTool ?? null,
   date_published: new Date().toISOString().slice(0, 10),
   ...(publish ? { status: "published" } : {}),
 };
-const existing = (await api("GET", `/items/guides?filter[slug][_eq]=${input.slug}&fields=id,status`))[0];
+const existing = (await api("GET", `/items/guides?filter[slug][_eq]=${input.slug}&fields=id,status,cover`))[0];
+if (input.coverFile) item.cover = await uploadCover(existing?.cover);
 const saved = existing ? await api("PATCH", `/items/guides/${existing.id}`, item) : await api("POST", "/items/guides", { status: "draft", ...item });
 
 console.log(`${existing ? "Updated" : "Created"} guide "${saved.title}" (${saved.status}).`);
 console.log(`Edit:   ${url}/admin/content/guides/${saved.id}`);
+if (saved.cover) console.log(`Image:  ${url}/assets/${saved.cover}`);
 console.log(`Public: https://zindabaagh.com/guides/${saved.slug}${saved.status === "published" ? "  (after the website has rebuilt)" : "  (once published)"}`);

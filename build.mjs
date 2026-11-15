@@ -2,7 +2,8 @@
 //
 //   content/site.json      menu, footer, tool list, services, yearly figures
 //   content/pages/**.html  one file per page: JSON settings between --- lines, then the page body
-//   content/pages/guides/  guides (blog posts): add "guide": true and a "date"; the URL is /guides/<file name>
+//   content/pages/guides/  guides (blog posts): add "guide": true and a "date"; the URL is /guides/<file name>;
+//                          optional "image" (1200x630, e.g. "/images/x.png") for the guide, its card and link previews
 //   public/                files copied as they are (CSS, JS, favicon)
 //
 // With CMS_URL set (or cms.url in site.json), published guides, pages, the menu and the services
@@ -66,11 +67,13 @@ export async function build() {
   for (const g of cms?.guides ?? [])
     addOrReplace({ guide: true, fromCms: true, path: `/guides/${g.slug}`, file: `CMS guide "${g.slug}"`, title: g.title, description: g.description ?? "",
       date: String(g.date_published ?? g.date_created ?? "").slice(0, 10) || new Date().toISOString().slice(0, 10),
-      relatedTool: g.related_tool || undefined, body: g.body ?? "" });
+      relatedTool: g.related_tool || undefined, body: g.body ?? "", image: g.cover ? `${cmsUrl}/assets/${g.cover}` : undefined });
   for (const c of cms?.pages ?? [])
     addOrReplace({ fromCms: true, path: `/${c.slug}`, file: `CMS page "${c.slug}"`, title: `${c.title} | ${site.name}`, description: c.description ?? "",
       body: `\n    <div class="wrap legal">\n      <h1>${esc(c.title)}</h1>\n${c.body ?? ""}\n    </div>` });
   const guides = pages.filter((p) => p.guide).sort((a, b) => b.date.localeCompare(a.date));
+  // CMS images can be served smaller; local files are used as they are.
+  const sized = (src, width) => (cmsUrl && src.startsWith(cmsUrl) ? `${src}?width=${width}&quality=80&format=webp` : src);
   const niceDate = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const guideCards = (list) =>
     list.length
@@ -78,7 +81,8 @@ export async function build() {
         <div class="cards cards-wide">${list
           .map(
             (g) => `
-          <a class="card tool-card" href="${g.path}">
+          <a class="card tool-card${g.image ? " has-image" : ""}" href="${g.path}">${g.image ? `
+            <img class="card-image" src="${sized(g.image, 720)}" alt="" width="1280" height="720" loading="lazy">` : ""}
             <span class="badge">Guide</span>
             <h3>${esc(g.title)}</h3>
             <p>${esc(g.description)}</p>
@@ -221,6 +225,37 @@ ${page.body}
       </div>
     </div>`;
 
+  // Share buttons under a guide. Networks open in a new tab; "Share" uses the phone's own share sheet
+  // (WhatsApp, Instagram, Messenger...), Instagram has no web share link so it uses the share sheet or copies the link.
+  const icon = (d, fill) => `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" ${fill ? 'fill="currentColor"' : 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'}>${d}</svg>`;
+  const shareIcons = {
+    whatsapp: icon('<path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z"/><path d="M9 8.5c0 3.6 2.9 6.5 6.5 6.5l1-1.6-2-1-1 .8c-1.1-.5-2-1.4-2.5-2.5l.8-1-1-2z" fill="currentColor" stroke="none"/>'),
+    facebook: icon('<path d="M14 8.5h2.5V5H14c-2.5 0-4 1.6-4 4v2H8v3.5h2V21h3.5v-6.5H16l.5-3.5h-3V9.3c0-.5.3-.8.5-.8z"/>', true),
+    x: icon('<path d="M4 4l16 16M20 4L4 20"/>'),
+    linkedin: icon('<path d="M5 9.5h3V20H5zM6.5 4.2a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM10 9.5h2.9v1.5c.5-.9 1.7-1.8 3.4-1.8 3 0 3.7 2 3.7 4.6V20h-3v-5.5c0-1.4-.3-2.6-1.8-2.6s-2.2 1.1-2.2 2.6V20h-3z"/>', true),
+    telegram: icon('<path d="M21 4L3 11.2l5.5 2L19 6.5l-8.5 8.2V20l3-3.3 4.5 3.3z"/>'),
+    instagram: icon('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/>'),
+    link: icon('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
+    share: icon('<path d="M12 15V3M7 8l5-5 5 5M5 13v7h14v-7"/>'),
+  };
+  const shareBar = (page, label) => {
+    const url = encodeURIComponent(site.url + page.path), text = encodeURIComponent(page.title);
+    const link = (key, name, href) => `<a class="share-btn share-${key}" href="${href}" target="_blank" rel="noopener" aria-label="Share on ${name}" title="${name}">${shareIcons[key]}</a>`;
+    return `
+      <div class="share" data-share-url="${esc(site.url + page.path)}" data-share-title="${esc(page.title)}">
+        <span class="share-label">${label}</span>
+        <button class="share-btn share-native" type="button" data-share="native" aria-label="Share" title="Share" hidden>${shareIcons.share}</button>
+        ${link("whatsapp", "WhatsApp", `https://wa.me/?text=${text}%20${url}`)}
+        ${link("facebook", "Facebook", `https://www.facebook.com/sharer/sharer.php?u=${url}`)}
+        <button class="share-btn share-instagram" type="button" data-share="instagram" aria-label="Share on Instagram" title="Instagram">${shareIcons.instagram}</button>
+        ${link("x", "X", `https://x.com/intent/post?url=${url}&text=${text}`)}
+        ${link("linkedin", "LinkedIn", `https://www.linkedin.com/sharing/share-offsite/?url=${url}`)}
+        ${link("telegram", "Telegram", `https://t.me/share/url?url=${url}&text=${text}`)}
+        <button class="share-btn share-copy" type="button" data-share="copy" aria-label="Copy link" title="Copy link">${shareIcons.link}</button>
+        <span class="share-note" role="status"></span>
+      </div>`;
+  };
+
   // A guide gets its heading, date, a call to action and the disclaimer around its text.
   const guidePage = (page) => {
     const tool = page.relatedTool && site.tools.find((t) => t.slug === page.relatedTool);
@@ -229,8 +264,9 @@ ${page.body}
     <article class="wrap guide">
       <p class="crumbs"><a href="/">Home</a> / <a href="/guides">Guides</a> / ${esc(page.title)}</p>
       <h1>${esc(page.title)}</h1>
-      <p class="muted">Updated ${niceDate(page.date)} · Figures for ${site.facts.year}</p>
-${page.body}
+      <p class="muted">Updated ${niceDate(page.date)} · Figures for ${site.facts.year}</p>${page.image ? `
+      <img class="guide-image" src="${sized(page.image, 1280)}" alt="${esc(page.title)}" width="1280" height="720">` : ""}${shareBar(page, "Share")}
+${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
       <aside class="guide-cta">${
         tool
           ? `
@@ -277,6 +313,17 @@ ${page.body}
     const description = page.description ?? tool.short;
     const canonical = site.url + path;
     const scripts = ["/js/facts.js", "/js/zb.js", ...(page.scripts ?? [])];
+    const ogImage = page.image ? (page.image.startsWith("http") ? page.image : site.url + page.image) : `${site.url}/og-image.png`;
+    // Structured data for guides (search engines read it as an article). "<" is escaped so text can never close the script tag.
+    const articleLd = page.guide
+      ? JSON.stringify({
+          "@context": "https://schema.org", "@type": "Article", headline: page.title, description, image: [ogImage],
+          datePublished: page.date, dateModified: page.date, inLanguage: page.lang ?? "en",
+          mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+          author: { "@type": "Person", name: "Rahat Rajpoot" },
+          publisher: { "@type": "Organization", name: site.name, url: site.url, logo: { "@type": "ImageObject", url: `${site.url}/apple-touch-icon.png` } },
+        }).replace(/</g, "\\u003c")
+      : "";
 
     // Text typed in the CMS is inserted as it is; {{...}} placeholders only work in the files.
     const main = tool ? toolPage(page, tool) : page.guide ? guidePage(page) : page.body;
@@ -289,11 +336,13 @@ ${page.body}
   <meta name="description" content="${esc(description)}">${site.indexing === false ? '\n  <meta name="robots" content="noindex, nofollow">' : page.noindex ? '\n  <meta name="robots" content="noindex">' : ""}
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="${page.guide ? "article" : "website"}">
   <meta property="og:url" content="${canonical}">
-  <meta property="og:image" content="${site.url}/og-image.png">
+  <meta property="og:image" content="${ogImage}">${page.guide ? `
+  <meta property="article:published_time" content="${page.date}">` : ""}
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="${canonical}">
+  <link rel="canonical" href="${canonical}">${page.guide ? `
+  <script type="application/ld+json">${articleLd}</script>` : ""}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/styles.css?v=${version}">

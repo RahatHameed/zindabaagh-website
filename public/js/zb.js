@@ -31,6 +31,28 @@
     nav.addEventListener("click", (e) => { if (e.target.closest("a")) { nav.classList.remove("is-open"); toggle.setAttribute("aria-expanded", "false"); } });
   }
 
+  // Share buttons on guides
+  document.querySelectorAll(".share").forEach((box) => {
+    const url = box.dataset.shareUrl, title = box.dataset.shareTitle, note = box.querySelector(".share-note");
+    const say = (msg) => { note.textContent = msg; clearTimeout(box._t); box._t = setTimeout(() => (note.textContent = ""), 4000); };
+    const copy = async (msg) => {
+      try { await navigator.clipboard.writeText(url); }
+      catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+      say(msg);
+    };
+    const canShare = typeof navigator.share === "function";
+    const native = box.querySelector('[data-share="native"]');
+    if (canShare && native) native.hidden = false;
+    box.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button[data-share]");
+      if (!btn) return;
+      const kind = btn.dataset.share;
+      if (kind === "copy") return copy("Link copied");
+      if (canShare) { try { await navigator.share({ title, url }); } catch { /* closed */ } return; }
+      if (kind === "instagram") copy("Link copied. Paste it in your Instagram story or DM.");
+    });
+  });
+
   // Tool filter on the home page
   const chips = document.querySelectorAll(".chip[data-filter]");
   chips.forEach((chip) => chip.addEventListener("click", () => {
