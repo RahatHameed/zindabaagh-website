@@ -84,56 +84,72 @@
       "group": "study",
       "icon": "🧭",
       "title": "Visa Route Finder",
-      "short": "Answer a few questions and see which German visa fits your plan."
+      "short": "Answer a few questions and see which German visa fits your plan.",
+      "seoTitle": "Germany Visa Finder {{facts.year}}: Which German Visa Do You Need?",
+      "description": "Answer a few questions and see which German visa fits your plan: student visa, EU Blue Card, skilled worker visa, Opportunity Card or Ausbildung. Free, no sign-up."
     },
     {
       "slug": "grade-converter",
       "group": "study",
       "icon": "🎓",
       "title": "German Grade Converter",
-      "short": "Convert your GPA or percentage to the German 1.0 to 4.0 scale."
+      "short": "Convert your GPA or percentage to the German 1.0 to 4.0 scale.",
+      "seoTitle": "German Grade Converter: GPA and Percentage to German Grade",
+      "description": "Convert your GPA, CGPA or percentage to the German 1.0 to 4.0 scale with the modified Bavarian formula that German universities and uni-assist use. Free, no sign-up."
     },
     {
       "slug": "blocked-account",
       "group": "study",
       "icon": "🏦",
       "title": "Blocked Account Calculator",
-      "short": "How much you need in your Sperrkonto, in euros and in your own currency."
+      "short": "How much you need in your Sperrkonto, in euros and in your own currency.",
+      "seoTitle": "Blocked Account Calculator Germany {{facts.year}} (Sperrkonto)",
+      "description": "Work out how much to deposit in your German blocked account (Sperrkonto) in {{facts.year}}: {{facts.blockedAccount.monthly|eur}} a month for students, shown in euros and in your own currency."
     },
     {
       "slug": "blue-card-check",
       "group": "work",
       "icon": "💼",
       "title": "Blue Card Salary Check",
-      "short": "Check a job offer against this year's EU Blue Card salary thresholds."
+      "short": "Check a job offer against this year's EU Blue Card salary thresholds.",
+      "seoTitle": "EU Blue Card Salary Check Germany {{facts.year}}",
+      "description": "Check a job offer against the {{facts.year}} EU Blue Card salary thresholds in Germany: {{facts.blueCard.standard|eur}} standard, {{facts.blueCard.reduced|eur2}} for shortage occupations and recent graduates."
     },
     {
       "slug": "chancenkarte-points",
       "group": "work",
       "icon": "⭐",
       "title": "Opportunity Card Points",
-      "short": "Count your Chancenkarte points and see if you reach the minimum."
+      "short": "Count your Chancenkarte points and see if you reach the minimum.",
+      "seoTitle": "Opportunity Card Points Calculator {{facts.year}} (Chancenkarte)",
+      "description": "Count your points for Germany's Opportunity Card (Chancenkarte) and see if you reach the {{facts.chancenkarte.minPoints}} points you need. Covers qualification, experience, language and age."
     },
     {
       "slug": "salary-calculator",
       "group": "work",
       "icon": "💶",
       "title": "Net Salary Calculator",
-      "short": "Estimate your take-home pay after German tax and social contributions."
+      "short": "Estimate your take-home pay after German tax and social contributions.",
+      "seoTitle": "Net Salary Calculator Germany {{facts.year}}: Gross to Net",
+      "description": "Estimate your German net salary for {{facts.year}}: monthly take-home pay after income tax and pension, health, care and unemployment insurance. Free gross to net calculator."
     },
     {
       "slug": "arrival-planner",
       "group": "live",
       "icon": "🗓️",
       "title": "First Weeks Planner",
-      "short": "Your to-do list after landing, with the Anmeldung deadline worked out."
+      "short": "Your to-do list after landing, with the Anmeldung deadline worked out.",
+      "seoTitle": "First Weeks in Germany Checklist: Anmeldung, Bank, Tax ID",
+      "description": "Your to-do list for the first weeks in Germany, with dates: Anmeldung within {{facts.anmeldungDays}} days, bank account, health insurance, tax ID and residence permit."
     },
     {
       "slug": "residence-timeline",
       "group": "live",
       "icon": "🪪",
       "title": "PR & Citizenship Timeline",
-      "short": "See the earliest dates for a settlement permit and a German passport."
+      "short": "See the earliest dates for a settlement permit and a German passport.",
+      "seoTitle": "Germany PR and Citizenship Timeline Calculator",
+      "description": "See the earliest date you can apply for a settlement permit (permanent residence) and for German citizenship, based on your residence permit and German level."
     }
   ],
   "pathways": [
@@ -351,6 +367,10 @@
         {
           "label": "Guides",
           "href": "/guides"
+        },
+        {
+          "label": "About",
+          "href": "/about"
         },
         {
           "label": "Contact",

@@ -2,7 +2,24 @@
 {
   "tool": "residence-timeline",
   "lead": "Enter when your residence permit started and see the earliest dates for a settlement permit (permanent residence) and German citizenship.",
-  "scripts": ["/js/tools/residence-timeline.js"]
+  "scripts": [
+    "/js/tools/residence-timeline.js"
+  ],
+  "updated": "2026-11-16",
+  "faq": [
+    {
+      "q": "How long until permanent residence with an EU Blue Card?",
+      "a": "{{facts.settlement.blueCardA1Months}} months, or {{facts.settlement.blueCardB1Months}} months with German at B1. You need German at A1 at least, and pension contributions for the whole period."
+    },
+    {
+      "q": "How long until I can get German citizenship?",
+      "a": "{{facts.citizenshipYears}} years of legal residence in Germany. You also need German at B1, a passed citizenship test and an income that covers you and your family without social benefits. You can keep your other nationality."
+    },
+    {
+      "q": "Does a student permit lead to permanent residence?",
+      "a": "Not directly. After you graduate and work as a skilled worker, the wait for a settlement permit is {{facts.settlement.germanGraduateMonths}} months, with German at B1."
+    }
+  ]
 }
 ---
       <div class="tool-grid">

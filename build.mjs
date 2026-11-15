@@ -4,6 +4,10 @@
 //   content/pages/**.html  one file per page: JSON settings between --- lines, then the page body
 //   content/pages/guides/  guides (blog posts): add "guide": true and a "date"; the URL is /guides/<file name>;
 //                          optional "image" (1200x630, e.g. "/images/x.png") for the guide, its card and link previews
+//   Optional on any page:  "updated": "2026-11-16" (date of the last real change, goes into the sitemap)
+//   Optional on tool pages: "faq": [{ "q": "...", "a": "..." }] (plain text, {{...}} values allowed): shown under the
+//                          tool and given to search engines. The search title and description of a tool are
+//                          "seoTitle" and "description" in site.json.
 //   public/                files copied as they are (CSS, JS, favicon)
 //
 // With CMS_URL set (or cms.url in site.json), published guides, pages, the menu and the services
@@ -44,6 +48,7 @@ export async function build() {
   const cmsUrl = (process.env.CMS_URL || site.cms?.url || "").replace(/\/+$/, "");
   const cms = cmsUrl ? await loadCms(cmsUrl) : null;
   if (cms?.site) for (const key of ["tagline", "nav", "navCta", "services"]) if (cms.site[key]?.length || cms.site[key]?.label) site[key] = cms.site[key];
+  site.facts.blockedAccount.yearly ??= site.facts.blockedAccount.monthly * 12;
   const toolHref = (t) => `/tools/${t.slug}`;
   const toolsIn = (group) => site.tools.filter((t) => !group || t.group === group);
 
@@ -67,11 +72,14 @@ export async function build() {
   for (const g of cms?.guides ?? [])
     addOrReplace({ guide: true, fromCms: true, path: `/guides/${g.slug}`, file: `CMS guide "${g.slug}"`, title: g.title, description: g.description ?? "",
       date: String(g.date_published ?? g.date_created ?? "").slice(0, 10) || new Date().toISOString().slice(0, 10),
-      relatedTool: g.related_tool || undefined, body: g.body ?? "", image: g.cover ? `${cmsUrl}/assets/${g.cover}` : undefined });
+      updated: String(g.date_updated ?? "").slice(0, 10) || undefined, relatedTool: g.related_tool || undefined, body: g.body ?? "", image: g.cover ? `${cmsUrl}/assets/${g.cover}` : undefined });
   for (const c of cms?.pages ?? [])
     addOrReplace({ fromCms: true, path: `/${c.slug}`, file: `CMS page "${c.slug}"`, title: `${c.title} | ${site.name}`, description: c.description ?? "",
       body: `\n    <div class="wrap legal">\n      <h1>${esc(c.title)}</h1>\n${c.body ?? ""}\n    </div>` });
   const guides = pages.filter((p) => p.guide).sort((a, b) => b.date.localeCompare(a.date));
+  // Date of the last change: "updated" if it is later than the date, otherwise the date.
+  const modified = (p) => (p.updated && p.updated > (p.date ?? "") ? p.updated : p.date);
+  const newestGuide = guides.map(modified).sort().pop();
   // CMS images can be served smaller; local files are used as they are.
   const sized = (src, width) => (cmsUrl && src.startsWith(cmsUrl) ? `${src}?width=${width}&quality=80&format=webp` : src);
   const niceDate = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -213,7 +221,12 @@ export async function build() {
       </div>
     </section>
     <div class="wrap tool-body">
-${page.body}
+${page.body}${page.faq?.length ? `
+      <section class="explain faq">
+        <h2>Questions and answers</h2>${page.faq.map((x) => `
+        <h3>${esc(x.q)}</h3>
+        <p>${esc(x.a)}</p>`).join("")}
+      </section>` : ""}
       <p class="disclaimer">This tool gives an estimate based on ${site.facts.year} rules and what you enter. It runs in your browser: nothing you type is sent to us. It is not legal or tax advice. Confirm your case with the responsible German authority or mission.</p>
       <h2 class="more-title">More tools</h2>
       <div class="cards">${site.tools
@@ -309,21 +322,37 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
     const tool = page.tool && site.tools.find((t) => t.slug === page.tool);
     if (page.tool && !tool) throw new Error(`${file}: no tool "${page.tool}" in site.json`);
     const path = tool ? toolHref(tool) : page.path;
-    const title = page.guide ? `${page.title} | ${site.name}` : page.title ?? `${tool.title} (${site.facts.year}) | ${site.name}`;
-    const description = page.description ?? tool.short;
+    const title = page.guide ? `${page.title} | ${site.name}` : page.title ?? `${tool.seoTitle ? fill(tool.seoTitle) : `${tool.title} (${site.facts.year})`} | ${site.name}`;
+    const description = page.description ?? (tool.description ? fill(tool.description) : tool.short);
     const canonical = site.url + path;
     const scripts = ["/js/facts.js", "/js/zb.js", ...(page.scripts ?? [])];
     const ogImage = page.image ? (page.image.startsWith("http") ? page.image : site.url + page.image) : `${site.url}/og-image.png`;
-    // Structured data for guides (search engines read it as an article). "<" is escaped so text can never close the script tag.
-    const articleLd = page.guide
-      ? JSON.stringify({
-          "@context": "https://schema.org", "@type": "Article", headline: page.title, description, image: [ogImage],
-          datePublished: page.date, dateModified: page.date, inLanguage: page.lang ?? "en",
-          mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
-          author: { "@type": "Person", name: "Rahat Rajpoot" },
-          publisher: { "@type": "Organization", name: site.name, url: site.url, logo: { "@type": "ImageObject", url: `${site.url}/apple-touch-icon.png` } },
-        }).replace(/</g, "\\u003c")
-      : "";
+    // Structured data: tells search engines what the page is (organisation, article, tool, questions, breadcrumb).
+    const publisher = { "@type": "Organization", "@id": `${site.url}/#organization`, name: site.name, url: site.url, logo: { "@type": "ImageObject", url: `${site.url}/apple-touch-icon.png` } };
+    const lang = page.lang ?? "en";
+    const ld = [];
+    if (path === "/") ld.push(
+      { ...publisher, description: site.tagline, email: site.email },
+      { "@type": "WebSite", "@id": `${site.url}/#website`, name: site.name, url: site.url, description: site.tagline, inLanguage: lang, publisher: { "@id": publisher["@id"] } });
+    if (page.guide) ld.push({
+      "@type": "Article", headline: page.title, description, image: [ogImage],
+      datePublished: page.date, dateModified: modified(page), inLanguage: lang,
+      mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+      author: { "@type": "Person", name: "Rahat Rajpoot", url: `${site.url}/about` }, publisher });
+    if (tool) ld.push({
+      "@type": "WebApplication", name: tool.title, url: canonical, description, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
+      isAccessibleForFree: true, offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, inLanguage: lang, publisher });
+    if (page.faq?.length) ld.push({
+      "@type": "FAQPage", mainEntity: page.faq.map((x) => ({ "@type": "Question", name: fill(x.q), acceptedAnswer: { "@type": "Answer", text: fill(x.a) } })) });
+    if (path !== "/" && !page.noindex) ld.push({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { name: "Home", item: `${site.url}/` },
+        ...(page.guide ? [{ name: "Guides", item: `${site.url}/guides` }] : []),
+        { name: tool ? tool.title : page.guide ? page.title : title.split(/[:|]/)[0].trim(), item: canonical },
+      ].map((c, i) => ({ "@type": "ListItem", position: i + 1, ...c })) });
+    // "<" is escaped so text can never close the script tag.
+    const ldTags = ld.map((o) => `\n  <script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", ...o }).replace(/</g, "\\u003c")}</script>`).join("");
 
     // Text typed in the CMS is inserted as it is; {{...}} placeholders only work in the files.
     const main = tool ? toolPage(page, tool) : page.guide ? guidePage(page) : page.body;
@@ -334,15 +363,16 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">${site.indexing === false ? '\n  <meta name="robots" content="noindex, nofollow">' : page.noindex ? '\n  <meta name="robots" content="noindex">' : ""}
+  <meta property="og:site_name" content="${esc(site.name)}">
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
   <meta property="og:type" content="${page.guide ? "article" : "website"}">
   <meta property="og:url" content="${canonical}">
   <meta property="og:image" content="${ogImage}">${page.guide ? `
-  <meta property="article:published_time" content="${page.date}">` : ""}
+  <meta property="article:published_time" content="${page.date}">
+  <meta property="article:modified_time" content="${modified(page)}">` : ""}
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="${canonical}">${page.guide ? `
-  <script type="application/ld+json">${articleLd}</script>` : ""}
+  <link rel="canonical" href="${canonical}">${ldTags}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/styles.css?v=${version}">
@@ -357,14 +387,16 @@ ${scripts.map((s) => `  <script src="${s}?v=${version}" defer></script>`).join("
     const target = join(out, path === "/" ? "index.html" : path.endsWith(".html") ? path : `${path}.html`);
     await mkdir(dirname(target), { recursive: true });
     await writeFile(target, html);
-    if (!page.noindex) urls.push(canonical);
+    // The home page and the guides list also change when a guide is added.
+    const lastmod = path === "/" || path === "/guides" ? [page.updated, newestGuide].filter(Boolean).sort().pop() : modified(page);
+    if (!page.noindex) urls.push({ loc: canonical, lastmod });
   }
 
   await writeFile(
     join(out, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-      .sort()
-      .map((u) => `  <url><loc>${u}</loc></url>`)
+      .sort((a, b) => a.loc.localeCompare(b.loc))
+      .map((u) => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}</url>`)
       .join("\n")}\n</urlset>\n`
   );
   // "indexing": false in site.json keeps search engines out: every page gets a noindex tag and the

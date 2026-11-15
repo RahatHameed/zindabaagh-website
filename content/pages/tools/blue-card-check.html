@@ -2,7 +2,28 @@
 {
   "tool": "blue-card-check",
   "lead": "Enter the salary from your job offer and see whether it reaches this year's EU Blue Card threshold.",
-  "scripts": ["/js/tools/blue-card-check.js"]
+  "scripts": [
+    "/js/tools/blue-card-check.js"
+  ],
+  "updated": "2026-11-16",
+  "faq": [
+    {
+      "q": "What is the minimum salary for the EU Blue Card in Germany in {{facts.year}}?",
+      "a": "The standard threshold is {{facts.blueCard.standard|eur}} gross a year. The lower threshold is {{facts.blueCard.reduced|eur2}} a year. Both change every January."
+    },
+    {
+      "q": "Who can use the lower Blue Card salary threshold?",
+      "a": "People with a job in a shortage occupation, people who finished their degree less than three years ago, and IT specialists without a degree who have at least three years of comparable experience. With the lower threshold, the Federal Employment Agency has to approve the job."
+    },
+    {
+      "q": "Do bonuses count towards the Blue Card salary?",
+      "a": "Count fixed base pay only. Bonuses that are not guaranteed usually do not count."
+    },
+    {
+      "q": "What if my salary is below the Blue Card threshold?",
+      "a": "The Blue Card is then not possible, but the skilled worker residence permit has no fixed salary threshold for most people under 45. The Visa Route Finder shows which route fits."
+    }
+  ]
 }
 ---
       <div class="tool-grid">

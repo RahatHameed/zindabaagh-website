@@ -2,7 +2,24 @@
 {
   "tool": "blocked-account",
   "lead": "For a student visa you usually prove your funding with a blocked account (Sperrkonto). Work out how much to deposit.",
-  "scripts": ["/js/tools/blocked-account.js"]
+  "scripts": [
+    "/js/tools/blocked-account.js"
+  ],
+  "updated": "2026-11-16",
+  "faq": [
+    {
+      "q": "How much money do I need in a blocked account for Germany in {{facts.year}}?",
+      "a": "Students need {{facts.blockedAccount.monthly|eur}} a month in {{facts.year}}, so {{facts.blockedAccount.yearly|eur}} for a full year. Applicants for a language course or study preparation usually need 10% more. Provider fees come on top."
+    },
+    {
+      "q": "Can I withdraw the whole amount after I arrive?",
+      "a": "No. The provider releases one monthly portion at a time to your normal German bank account. That is the point of the account: it proves you can pay for each month of your stay."
+    },
+    {
+      "q": "Is a blocked account the only way to prove my funding?",
+      "a": "No. It is the most common proof, but a scholarship or a formal commitment from someone living in Germany (Verpflichtungserklärung) can replace all or part of it."
+    }
+  ]
 }
 ---
       <div class="tool-grid">

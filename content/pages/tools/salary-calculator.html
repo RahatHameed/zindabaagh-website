@@ -2,7 +2,24 @@
 {
   "tool": "salary-calculator",
   "lead": "Enter a gross salary and see roughly what arrives in your bank account each month, and where the rest goes.",
-  "scripts": ["/js/tools/salary-calculator.js"]
+  "scripts": [
+    "/js/tools/salary-calculator.js"
+  ],
+  "updated": "2026-11-16",
+  "faq": [
+    {
+      "q": "What is deducted from a salary in Germany?",
+      "a": "Income tax, and four social insurances: pension ({{facts.social.pensionRate}}%), health ({{facts.social.healthRate}}% plus half of your insurer's additional contribution), long-term care ({{facts.social.careRate}}%) and unemployment ({{facts.social.unemploymentRate}}%). Higher incomes also pay the solidarity surcharge, and church members pay church tax."
+    },
+    {
+      "q": "Which tax class does the calculator use?",
+      "a": "\"Single, or both partners work\" is tax class I or IV. \"Married, I am the only or main earner\" is tax class III."
+    },
+    {
+      "q": "How exact is the net salary?",
+      "a": "It is an estimate for an employee with public health insurance. Private health insurance, company cars, several children and a few regional rules change the result a little. The Finance Ministry's official wage tax calculator gives the exact figure."
+    }
+  ]
 }
 ---
       <div class="tool-grid">
