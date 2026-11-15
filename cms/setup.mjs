@@ -121,6 +121,13 @@ for (const c of collections) {
     for (const f of c.fields) if (!have.has(f.field)) { await api("POST", `/fields/${c.collection}`, f); console.log(`added ${c.collection}.${f.field}`); }
     console.log(`collection ${c.collection} ok`);
   }
+  // A single-file field needs a relation to the file library, or the admin panel cannot show the chosen file.
+  const relations = new Set((await api("GET", `/relations/${c.collection}`)).map((r) => r.field));
+  for (const f of c.fields)
+    if (f.type === "uuid" && f.meta?.special?.includes("file") && !relations.has(f.field)) {
+      await api("POST", "/relations", { collection: c.collection, field: f.field, related_collection: "directus_files", schema: { on_delete: "SET NULL" } });
+      console.log(`linked ${c.collection}.${f.field} to the file library`);
+    }
 }
 
 // ---- permissions ----
