@@ -299,6 +299,37 @@
       "external": true
     }
   ],
+  "apps": [
+    {
+      "slug": "examklar",
+      "icon": "🗣️",
+      "badge": "Learn German",
+      "title": "ExamKlar",
+      "text": "Practice for the German language exams you need for a visa, residence or citizenship, in the Goethe and telc format.",
+      "points": [
+        "Mock exams from A1 to B2",
+        "Vocabulary training and grammar chapters",
+        "Free to start"
+      ],
+      "href": "https://examklar.zindabaagh.com",
+      "cta": "Open ExamKlar"
+    },
+    {
+      "slug": "fuhrerschein-coach",
+      "icon": "🚗",
+      "badge": "Driving licence",
+      "title": "Führerschein Coach",
+      "text": "Practice for the German practical driving test (Class B), made for learners whose first language is not German.",
+      "points": [
+        "Exam simulator with a German-speaking examiner",
+        "Instructor commands and examiner questions with audio",
+        "Driving vocabulary trainer",
+        "Free, no sign-up"
+      ],
+      "href": "https://fuhrerschein-coach.zindabaagh.com",
+      "cta": "Open Führerschein Coach"
+    }
+  ],
   "sources": [
     {
       "label": "Make it in Germany",
@@ -368,6 +399,10 @@
         {
           "label": "Guides",
           "href": "/guides"
+        },
+        {
+          "label": "Apps",
+          "href": "/apps"
         },
         {
           "label": "About",

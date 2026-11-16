@@ -195,6 +195,9 @@ h3 { font-size: 1.15rem; }
 .tool-card p { flex: 1; }
 .card-link { margin-top: 14px; font-weight: 600; font-size: .92rem; color: var(--brand); }
 .cards-wide { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.app-card p { flex: 0 0 auto; }
+.app-card ul { flex: 1; margin: 14px 0 0; padding-left: 1.2em; color: var(--muted); font-size: .95rem; }
+.app-card li { margin: 4px 0; }
 .service-card { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .service-card p { flex: 1; margin-bottom: 16px; }
 .badge {

@@ -8,6 +8,7 @@
 //   Optional on tool pages: "faq": [{ "q": "...", "a": "..." }] (plain text, {{...}} values allowed): shown under the
 //                          tool and given to search engines. The search title and description of a tool are
 //                          "seoTitle" and "description" in site.json.
+//   Apps page (/apps):     the cards come from "apps" in site.json; add an entry there for a new app
 //   public/                files copied as they are (CSS, JS, favicon)
 //
 // With CMS_URL set (or cms.url in site.json), published guides, pages, the menu and the services
@@ -111,6 +112,21 @@ export async function build() {
             .join("")}
         </div>
         <div class="cards" id="tool-grid">${site.tools.map(toolCard).join("")}
+        </div>`,
+    // The apps on their own addresses ("apps" in site.json). A new app is one more entry there.
+    appGrid: () => `
+        <div class="cards cards-wide">${site.apps
+          .map(
+            (a) => `
+          <a class="card tool-card app-card" href="${a.href}" target="_blank" rel="noopener">
+            <div class="icon" aria-hidden="true">${a.icon}</div>
+            <span class="badge">${esc(a.badge)}</span>
+            <h3>${esc(a.title)}</h3>
+            <p>${esc(a.text)}</p>${a.points?.length ? `\n            <ul>${a.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+            <span class="card-link">${esc(a.cta)} ↗</span>
+          </a>`
+          )
+          .join("")}
         </div>`,
     pathways: () => `
         <div class="cards">${site.pathways
@@ -342,6 +358,10 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
     if (tool) ld.push({
       "@type": "WebApplication", name: tool.title, url: canonical, description, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
       isAccessibleForFree: true, offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, inLanguage: lang, publisher });
+    if (page.appList) ld.push({
+      "@type": "ItemList", name: "Zindabaagh apps",
+      itemListElement: site.apps.map((a, i) => ({ "@type": "ListItem", position: i + 1,
+        item: { "@type": "WebApplication", name: a.title, url: a.href, description: a.text, applicationCategory: "EducationalApplication", operatingSystem: "Any", publisher: { "@id": publisher["@id"] } } })) });
     if (page.faq?.length) ld.push({
       "@type": "FAQPage", mainEntity: page.faq.map((x) => ({ "@type": "Question", name: fill(x.q), acceptedAnswer: { "@type": "Answer", text: fill(x.a) } })) });
     if (path !== "/" && !page.noindex) ld.push({
