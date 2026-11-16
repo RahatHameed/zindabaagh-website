@@ -277,7 +277,7 @@ ${page.body}${page.faq?.length ? `
     <article class="wrap guide">
       <p class="crumbs"><a href="/">Home</a> / <a href="/guides">Guides</a> / ${esc(page.title)}</p>
       <h1>${esc(page.title)}</h1>
-      <p class="muted">Updated ${niceDate(page.date)} · Figures for ${site.facts.year}</p>${page.image ? `
+      <p class="muted">By <a href="/about">${esc(site.author)}</a> · Updated ${niceDate(page.date)} · Figures for ${site.facts.year}</p>${page.image ? `
       <img class="guide-image" src="${sized(page.image, 1280)}" alt="${esc(page.title)}" width="1280" height="720">` : ""}${shareBar(page, "Share")}
 ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
       <aside class="guide-cta">${
@@ -338,7 +338,7 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
       "@type": "Article", headline: page.title, description, image: [ogImage],
       datePublished: page.date, dateModified: modified(page), inLanguage: lang,
       mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
-      author: { "@type": "Person", name: "Rahat Rajpoot", url: `${site.url}/about` }, publisher });
+      author: { "@type": "Person", name: site.author, url: `${site.url}/about` }, publisher });
     if (tool) ld.push({
       "@type": "WebApplication", name: tool.title, url: canonical, description, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
       isAccessibleForFree: true, offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, inLanguage: lang, publisher });
