@@ -56,9 +56,8 @@
       "href": "/services"
     },
     {
-      "label": "Learn German",
-      "href": "https://examklar.zindabaagh.com",
-      "external": true
+      "label": "Apps",
+      "href": "/apps"
     }
   ],
   "navCta": {
@@ -285,17 +284,6 @@
       ],
       "href": "https://app.cal.com/discover/rahat-hameed-1n1",
       "cta": "Book a call",
-      "external": true
-    },
-    {
-      "slug": "examklar",
-      "icon": "🗣️",
-      "badge": "Learn German",
-      "title": "ExamKlar: German exam practice",
-      "text": "Mock exams in the Goethe and telc format from A1 to B2, vocabulary training and grammar chapters. Free to start.",
-      "points": [],
-      "href": "https://examklar.zindabaagh.com",
-      "cta": "Open ExamKlar",
       "external": true
     }
   ],
