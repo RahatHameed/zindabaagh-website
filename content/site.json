@@ -3,6 +3,7 @@
   "url": "https://zindabaagh.com",
   "email": "hello@zindabaagh.com",
   "author": "Rahat Rajpoot",
+  "analytics": { "cloudflareToken": "33a5939a026244df9478a78187b5ab87" },
   "tagline": "Free tools and plain-language guides for studying, working and living in Germany.",
   "facts": {
     "year": 2026,

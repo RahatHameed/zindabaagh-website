@@ -342,6 +342,9 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
     const description = page.description ?? (tool.description ? fill(tool.description) : tool.short);
     const canonical = site.url + path;
     const scripts = ["/js/facts.js", "/js/zb.js", ...(page.scripts ?? [])];
+    // Cloudflare Web Analytics: no cookies, no individual tracking. Not on the legal pages.
+    const beacon = site.analytics?.cloudflareToken && !/^\/(impressum|datenschutz)/.test(page.path ?? "")
+      ? `\n  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${site.analytics.cloudflareToken}"}'></script>` : "";
     const ogImage = page.image ? (page.image.startsWith("http") ? page.image : site.url + page.image) : `${site.url}/og-image.png`;
     // Structured data: tells search engines what the page is (organisation, article, tool, questions, breadcrumb).
     const publisher = { "@type": "Organization", "@id": `${site.url}/#organization`, name: site.name, url: site.url, logo: { "@type": "ImageObject", url: `${site.url}/apple-touch-icon.png` } };
@@ -400,7 +403,7 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
 <body>${header}
   <main>${page.fromCms ? main : fill(main)}
   </main>${footer}
-${scripts.map((s) => `  <script src="${s}?v=${version}" defer></script>`).join("\n")}
+${scripts.map((s) => `  <script src="${s}?v=${version}" defer></script>`).join("\n")}${beacon}
 </body>
 </html>
 `;
