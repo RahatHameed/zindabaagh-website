@@ -1,7 +1,7 @@
 {
-  "name": "Zindabaagh",
-  "url": "https://zindabaagh.com",
-  "email": "hello@zindabaagh.com",
+  "name": "Zindabhaag",
+  "url": "https://zindabhaag.com",
+  "email": "hello@zindabhaag.com",
   "author": "Rahat Rajpoot",
   "analytics": { "cloudflareToken": "33a5939a026244df9478a78187b5ab87" },
   "tagline": "Free tools and plain-language guides for studying, working and living in Germany.",
@@ -300,7 +300,7 @@
         "Vocabulary training and grammar chapters",
         "Free to start"
       ],
-      "href": "https://examklar.zindabaagh.com",
+      "href": "https://examklar.com",
       "cta": "Open ExamKlar"
     },
     {
@@ -315,7 +315,7 @@
         "Driving vocabulary trainer",
         "Free, no sign-up"
       ],
-      "href": "https://fuhrerschein-coach.zindabaagh.com",
+      "href": "https://fuhrerschein-coach.zindabhaag.com",
       "cta": "Open Führerschein Coach"
     }
   ],
@@ -359,23 +359,23 @@
       "links": [
         {
           "label": "ExamKlar exam practice",
-          "href": "https://examklar.zindabaagh.com",
+          "href": "https://examklar.com",
           "external": true
         },
         {
           "label": "Goethe and telc mock exams",
-          "href": "https://examklar.zindabaagh.com",
+          "href": "https://examklar.com",
           "external": true
         },
         {
           "label": "Vocabulary and grammar",
-          "href": "https://examklar.zindabaagh.com",
+          "href": "https://examklar.com",
           "external": true
         }
       ]
     },
     {
-      "title": "Zindabaagh",
+      "title": "Zindabhaag",
       "links": [
         {
           "label": "Services",
@@ -413,7 +413,7 @@
     }
   ],
   "cms": {
-    "url": "https://cms.zindabaagh.com",
+    "url": "https://cms.zindabhaag.com",
     "uploadFolder": "6d62ee43-5da3-45b7-abf9-e2135573e083",
     "turnstileSiteKey": "0x4AAAAAAF-aA37jUOQcCcBE"
   }

@@ -8,24 +8,24 @@ Where every enquiry, e-mail and evaluation request arrives, and how to work with
 
 | What | Where you see it | Notification |
 |---|---|---|
-| **Free evaluation requests** (incl. uploaded documents) | Directus → **Leads** (https://cms.zindabaagh.com/admin/content/leads) | E-mail "New free evaluation: <name> (<goal>)" straight to zindabaagh@gmail.com; **Reply** answers the visitor |
-| **Contact form messages** (zindabaagh.com/contact) | Directus → **Messages** (https://cms.zindabaagh.com/admin/content/messages); set **message_status** new → answered → closed | E-mail "Contact form: <name> (<topic>)" to zindabaagh@gmail.com; **Reply** answers the sender |
-| E-mails to hello@zindabaagh.com (shown on the contact page and in the Impressum) | Gmail **zindabaagh@gmail.com** | Gmail |
-| E-mails to support@ / privacy@zindabaagh.com | Gmail **zindabaagh@gmail.com** | Gmail |
+| **Free evaluation requests** (incl. uploaded documents) | Directus → **Leads** (https://cms.zindabhaag.com/admin/content/leads) | E-mail "New free evaluation: <name> (<goal>)" straight to zindabaagh@gmail.com; **Reply** answers the visitor |
+| **Contact form messages** (zindabhaag.com/contact) | Directus → **Messages** (https://cms.zindabhaag.com/admin/content/messages); set **message_status** new → answered → closed | E-mail "Contact form: <name> (<topic>)" to zindabaagh@gmail.com; **Reply** answers the sender |
+| E-mails to hello@zindabhaag.com (shown on the contact page and in the Impressum) | Gmail **zindabaagh@gmail.com** | Gmail |
+| E-mails to support@ / privacy@zindabhaag.com | Gmail **zindabaagh@gmail.com** | Gmail |
 | Form requests when the CMS was down (fallback) | Gmail, as an e-mail from the visitor's own address with the answers in the text | Gmail |
 | **1-on-1 bookings and payments** | Cal.com dashboard (https://app.cal.com) | Cal.com e-mails |
 | ExamKlar sign-ups and learners | ExamKlar's Supabase project (separate) | – |
 | Instagram comments / keyword DMs | Instagram / SuperProfile, Facebook / SendPulse | as set up there |
 | Did an e-mail from Directus go out? | Brevo → **Transactional → Logs** (https://app.brevo.com) | – |
-| Is the site/CMS running, did a rebuild work? | Coolify (https://coolify.zindabaagh.com) → app / service → **Logs**, **Deployments** | – |
+| Is the site/CMS running, did a rebuild work? | Coolify (https://coolify.zindabhaag.com) → app / service → **Logs**, **Deployments** | – |
 | Backups | Coolify → zindabaagh-cms → Logs → service **backup** ("backup ok: …"); files in Cloudflare R2 → bucket `zindabaagh-cms` → `backups/` | – |
 
-Tip: in Gmail, create a filter for `from:noreply@mail.zindabaagh.com` and `subject:"New free evaluation"` with a label
+Tip: in Gmail, create a filter for `from:noreply@mail.zindabhaag.com` and `subject:"New free evaluation"` with a label
 "Leads", so requests never get lost between other mail.
 
 ## Logging in
 
-https://cms.zindabaagh.com/admin, e-mail `hello@zindabaagh.com`, password from Bitwarden. Forgotten
+https://cms.zindabhaag.com/admin, e-mail `hello@zindabhaag.com`, password from Bitwarden. Forgotten
 password: "Forgot password" on the login page; the reset mail goes to hello@ → Gmail.
 
 ## Working with evaluation requests (Leads)
@@ -59,7 +59,7 @@ statistics: Cloudflare → Application security → Turnstile.
 Normally the reel-post-package skill does this from a reel. By hand:
 
 1. **Guides** → **+** (top right).
-2. Fill in: **title**; **slug** (the address, e.g. `student-visa-checklist` → zindabaagh.com/guides/student-visa-checklist);
+2. Fill in: **title**; **slug** (the address, e.g. `student-visa-checklist` → zindabhaag.com/guides/student-visa-checklist);
    **description** (1-2 sentences for Google and link previews); **body** (the editor: headings, lists,
    links, tables, quotes); optional **keyword** (Instagram comment keyword) and **related_tool**
    (e.g. `blue-card-check`, shows a tool box under the guide).
@@ -82,7 +82,7 @@ Save → the site rebuilds by itself. If something looks wrong, change it back a
 
 ## Simple text pages
 
-**Pages** → **+**: title, slug, body, status Published → appears at zindabaagh.com/<slug>.
+**Pages** → **+**: title, slug, body, status Published → appears at zindabhaag.com/<slug>.
 
 ## If something does not update
 
@@ -94,5 +94,5 @@ Save → the site rebuilds by itself. If something looks wrong, change it back a
 - A flow showing "resolved" does not prove the e-mail went out. Proof is an entry in Brevo → Transactional → Logs. If Brevo shows nothing, search the Directus logs in Coolify for "mail" (on 2026-11-12 the cause was `EMAIL_FROM` containing a name: "451 Invalid from").
 - No lead e-mail? Directus → Flows → "Notify: new lead" logs, then Brevo → Transactional → Logs, then Gmail spam.
 - Visitors say the form says "security check failed"? Check that `TURNSTILE_SECRET` in Coolify matches the
-  widget in Cloudflare → Turnstile, and that the widget's hostname is zindabaagh.com. To switch the check off
+  widget in Cloudflare → Turnstile, and that the widget's hostname is zindabhaag.com. To switch the check off
   quickly: empty `TURNSTILE_SECRET` in Coolify → Restart → Pull latest and restart.

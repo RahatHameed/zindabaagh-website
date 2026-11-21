@@ -1,6 +1,6 @@
-# Zindabaagh branding
+# Zindabhaag branding
 
-**Idea:** Zindabaagh means "run alive". The mark is a runner in full stride, leaving a gold line
+**Idea:** Zindabhaag means "run alive". The mark is a runner in full stride, leaving a gold line
 (home) behind. The gold head doubles as a rising sun: a new start abroad.
 
 ## Ready to use
@@ -9,7 +9,7 @@
 |---|---|
 | `instagram-profile-1080.png` | Instagram, Facebook, YouTube and TikTok profile picture. Square with no rounded corners; the runner stays inside the circle crop. |
 | `facebook-cover-1640x624.png` | Facebook page cover. Text sits in the middle so phones do not cut it off. |
-| `og-image-1200x630.png` | Preview image when a zindabaagh.com link is shared (already used by the website). |
+| `og-image-1200x630.png` | Preview image when a zindabhaag.com link is shared (already used by the website). |
 | `logo-mark.svg`, `logo-mark-512.png`, `logo-mark-1024.png` | App-style icon: runner on green, rounded corners. This is also the website favicon. |
 | `logo-mark-light.svg` | Same icon on cream, for green or dark backgrounds. |
 | `logo-runner.svg` | Runner only, no background. |

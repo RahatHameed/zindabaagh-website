@@ -46,6 +46,6 @@
         <tr class="total"><td>Total</td><td>${total}</td></tr>
       </table>
       ${!enough ? `<p class="muted">The fastest ways to add points: a higher German certificate (up to 3 points) or partial recognition of your qualification (4 points).</p>
-        <p><a href="https://examklar.zindabaagh.com" target="_blank" rel="noopener">Practise for your German exam with ExamKlar ↗</a></p>` : ""}`;
+        <p><a href="https://examklar.com" target="_blank" rel="noopener">Practise for your German exam with ExamKlar ↗</a></p>` : ""}`;
   });
 })();

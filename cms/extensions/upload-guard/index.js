@@ -20,7 +20,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
 const LEAD_FILE_FIELDS = ["file_ielts", "file_cv", "file_degree", "file_transcript"];
 // Cloudflare Turnstile: leads from the website must carry a valid token (field "captcha").
 const TURNSTILE_VERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const SITE_HOSTS = ["zindabaagh.com", "www.zindabaagh.com"];
+const SITE_HOSTS = ["zindabhaag.com", "www.zindabhaag.com", "zindabaagh.com", "www.zindabaagh.com"];
 
 // An error Directus answers with 400 instead of 500.
 function refuse(message) {

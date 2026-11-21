@@ -1,6 +1,6 @@
 # zindabaagh-website
 
-**zindabaagh.com**: free tools and guides for studying, working and living in Germany, plus services
+**zindabhaag.com**: free tools and guides for studying, working and living in Germany, plus services
 (free evaluation, study visa support, Opportunity Card, CV review, 1-on-1 calls).
 
 | Document | Read it for |
@@ -31,7 +31,7 @@ a generated section (the list is in `build.mjs`). CMS content is inserted as wri
 ```bash
 node preview.mjs                 # check changes locally
 git add -A && git commit -m "…"  # then:
-git push                         # Coolify deploys zindabaagh.com (about 1 minute)
+git push                         # Coolify deploys zindabhaag.com (about 1 minute)
 ```
 Content (guides, menu, services, pages) is edited in Directus and goes live by itself; see
 [docs/USING-DIRECTUS.md](docs/USING-DIRECTUS.md). **Every January** update `facts` in `content/site.json` and
@@ -44,13 +44,13 @@ Bitwarden as you create it (section 6 of ARCHITECTURE.md lists them all).
 
 ### 1. Server, Coolify, DNS
 1. Hetzner server with Coolify: follow `D:\Rahat Projects\hetzner-mcp\main-server-runbook.md`.
-2. Cloudflare DNS for zindabaagh.com: A records `@`, `*` and `coolify` → server IP, all **DNS only** (grey cloud).
+2. Cloudflare DNS for zindabhaag.com: A records `@`, `*` and `coolify` → server IP, all **DNS only** (grey cloud).
 3. Coolify → Settings → Advanced → **API access: Enabled** (needed for the automatic rebuild).
 
 ### 2. Website
 1. Coolify → project "zindabaagh website" → new resource → GitHub App → this repository, branch `main`,
    build pack **Dockerfile**, port **8080**, health check `/healthz`.
-2. Domains: add `https://zindabaagh.com` and `https://www.zindabaagh.com` as two separate entries (each with `https://`).
+2. Domains: add `https://zindabhaag.com` and `https://www.zindabhaag.com` as two separate entries (each with `https://`).
 3. Deploy. Check that `/`, `/tools/visa-finder` and `/healthz` answer.
 
 ### 3. Cloudflare R2 (file storage + backups)
@@ -60,20 +60,20 @@ Bitwarden as you create it (section 6 of ARCHITECTURE.md lists them all).
 3. Endpoint: `https://<account id>.eu.r2.cloudflarestorage.com` (EU bucket).
 
 ### 4. Brevo (outgoing e-mail)
-1. Brevo account with the authenticated sending domain `mail.zindabaagh.com` (see `D:\Rahat Projects\zindabaagh-email-guide.md`).
+1. Brevo account with the authenticated sending domain `mail.zindabhaag.com` (see `D:\Rahat Projects\zindabaagh-email-guide.md`).
 2. SMTP & API → **Generate a new SMTP key** named `zindabaagh-cms` (Brevo asks for an e-mailed code). Note the SMTP login.
 
-### 5. Directus (cms.zindabaagh.com)
+### 5. Directus (cms.zindabhaag.com)
 1. Locally: `node cms/make-compose.mjs` → creates `cms/compose.yml`.
 2. Coolify → project "zinda sub domains" → new resource → **Docker Compose (empty)** → paste `cms/compose.yml`
    → Create. Name it `zindabaagh-cms`.
-3. General → set **Admin Email** `hello@zindabaagh.com` (the admin password is generated; copy it to Bitwarden).
-4. Domains → edit the Directus domain → **https**, `cms.zindabaagh.com`, port `8055`, **Noindex**.
+3. General → set **Admin Email** `hello@zindabhaag.com` (the admin password is generated; copy it to Bitwarden).
+4. Domains → edit the Directus domain → **https**, `cms.zindabhaag.com`, port `8055`, **Noindex**.
 5. Environment Variables (clear anything the browser autofills; set Build time to "not available"):
    `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`, `BREVO_SMTP_USER`, `BREVO_SMTP_KEY`,
    `EMAIL_TRANSPORT=smtp`. Copy the generated `SERVICE_BASE64_64_SECRET` and `SERVICE_PASSWORD_64_BACKUP`
    (backup passphrase) to Bitwarden.
-6. Deploy / Restart → dropdown → **Pull latest and restart**. Check https://cms.zindabaagh.com/server/ping.
+6. Deploy / Restart → dropdown → **Pull latest and restart**. Check https://cms.zindabhaag.com/server/ping.
 7. Log in to the admin, open your user → **Token** → generate → save. Put it into
    `C:\Users\<you>\.zindabaagh-cms.env` as `CMS_ADMIN_TOKEN=…`.
 8. Run, from this folder:
@@ -91,15 +91,15 @@ Bitwarden as you create it (section 6 of ARCHITECTURE.md lists them all).
    resource **zindabaagh-website** only, expiry Never.
 2. Add to `~/.zindabaagh-cms.env`:
    ```
-   COOLIFY_DEPLOY_WEBHOOK=https://coolify.zindabaagh.com/api/v1/deploy?uuid=<website app uuid>&force=true
+   COOLIFY_DEPLOY_WEBHOOK=https://coolify.zindabhaag.com/api/v1/deploy?uuid=<website app uuid>&force=true
    COOLIFY_TOKEN=…
    ```
    (The app uuid is in the app's address bar in Coolify.)
 3. `node cms/flows.mjs` → creates "Notify: new lead" (to zindabaagh@gmail.com; other inbox: `LEAD_NOTIFY_TO=…`
    in the env file) and "Rebuild website".
-4. Cloudflare → Email Routing → rule `hello@zindabaagh.com` → your inbox.
+4. Cloudflare → Email Routing → rule `hello@zindabhaag.com` → your inbox.
 5. Spam protection: Cloudflare → Application security → **Turnstile** → Add widget: name
-   `zindabaagh free evaluation`, hostname `zindabaagh.com`, mode **Managed** → Create.
+   `zindabaagh free evaluation`, hostname `zindabhaag.com`, mode **Managed** → Create.
    - **Site key** (public) → `content/site.json` → `cms.turnstileSiteKey`, commit and push.
    - **Secret key** → Bitwarden and Coolify → zindabaagh-cms → Environment Variables → `TURNSTILE_SECRET`
      (Build time: not available) → Restart → **Pull latest and restart**. Set it only after the website with

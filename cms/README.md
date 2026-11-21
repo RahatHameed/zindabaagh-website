@@ -1,4 +1,4 @@
-# CMS: Directus at cms.zindabaagh.com
+# CMS: Directus at cms.zindabhaag.com
 
 Directus is the admin panel for guides, simple pages, the menu, the services list and the leads from the
 free evaluation form (with uploaded documents). The website stays static and reads published content at
@@ -59,4 +59,4 @@ node cms/publish-guide.mjs my-guide.json --publish  # published; the site rebuil
   "relatedTool": "visa-finder"
 }
 ```
-Public address: `https://zindabaagh.com/guides/<slug>`. Running it again with the same slug updates the guide.
+Public address: `https://zindabhaag.com/guides/<slug>`. Running it again with the same slug updates the guide.

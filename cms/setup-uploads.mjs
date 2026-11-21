@@ -19,7 +19,7 @@ try {
     if (m && !env[m[1]]) env[m[1]] = m[2];
   }
 } catch { /* no env file */ }
-const url = (env.CMS_URL || "https://cms.zindabaagh.com").replace(/\/+$/, "");
+const url = (env.CMS_URL || "https://cms.zindabhaag.com").replace(/\/+$/, "");
 if (!env.CMS_ADMIN_TOKEN) { console.error("CMS_ADMIN_TOKEN is missing"); process.exit(1); }
 
 async function api(method, path, body) {

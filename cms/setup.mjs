@@ -20,7 +20,7 @@ try {
   }
 } catch { /* no env file: use the environment */ }
 
-const url = (env.CMS_URL || "https://cms.zindabaagh.com").replace(/\/+$/, "");
+const url = (env.CMS_URL || "https://cms.zindabhaag.com").replace(/\/+$/, "");
 const token = env.CMS_ADMIN_TOKEN;
 if (!token) { console.error(`CMS_ADMIN_TOKEN is missing. Put it in ${envFile} (line: CMS_ADMIN_TOKEN=...) or in the environment.`); process.exit(1); }
 
@@ -48,7 +48,7 @@ const editor = (field) => long(field, { interface: "input-rich-text-html", optio
 const collections = [
   {
     collection: "guides",
-    meta: { icon: "menu_book", note: "Guides (blog posts). Published guides appear at zindabaagh.com/guides/<slug>.", sort_field: null, archive_field: "status", archive_value: "draft", unarchive_value: "published", display_template: "{{title}}" },
+    meta: { icon: "menu_book", note: "Guides (blog posts). Published guides appear at zindabhaag.com/guides/<slug>.", sort_field: null, archive_field: "status", archive_value: "draft", unarchive_value: "published", display_template: "{{title}}" },
     fields: [
       status(),
       { field: "date_published", type: "date", meta: { interface: "datetime", width: "half", note: "Shown as 'Updated ...' on the page" }, schema: {} },
@@ -64,7 +64,7 @@ const collections = [
   },
   {
     collection: "pages",
-    meta: { icon: "article", note: "Simple text pages. A published page appears at zindabaagh.com/<slug>.", archive_field: "status", archive_value: "draft", unarchive_value: "published", display_template: "{{title}}" },
+    meta: { icon: "article", note: "Simple text pages. A published page appears at zindabhaag.com/<slug>.", archive_field: "status", archive_value: "draft", unarchive_value: "published", display_template: "{{title}}" },
     fields: [status(), text("title", { required: true }), text("slug", { required: true }), long("description"), editor("body"), created(), updated()],
   },
   {
@@ -97,7 +97,7 @@ const collections = [
   },
   {
     collection: "messages",
-    meta: { icon: "mail", note: "Messages from the contact form at zindabaagh.com/contact.", display_template: "{{name}} ({{topic}})", sort_field: null },
+    meta: { icon: "mail", note: "Messages from the contact form at zindabhaag.com/contact.", display_template: "{{name}} ({{topic}})", sort_field: null },
     fields: [
       choice("message_status", ["new", "answered", "closed"], { default: "new" }),
       created(),
@@ -164,7 +164,7 @@ for (const action of ["create", "read", "update"]) { await allow(policy.id, "gui
 let role = (await api("GET", "/roles?filter[name][_eq]=Guide publisher"))[0];
 if (!role) role = await api("POST", "/roles", { name: "Guide publisher", icon: "edit_note", policies: [{ policy: policy.id }] });
 
-const email = "guide-publisher@zindabaagh.com";
+const email = "guide-publisher@zindabaagh.com"; // login of the existing Directus user; not a mailbox, keep
 if (!(await api("GET", `/users?filter[email][_eq]=${email}`)).length) {
   const publisherToken = randomBytes(32).toString("base64url");
   await api("POST", "/users", { first_name: "Guide", last_name: "Publisher", email, role: role.id, token: publisherToken, status: "active" });

@@ -362,7 +362,7 @@ ${page.body}${shareBar(page, "Found this useful? Share it with a friend:")}
       "@type": "WebApplication", name: tool.title, url: canonical, description, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
       isAccessibleForFree: true, offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, inLanguage: lang, publisher });
     if (page.appList) ld.push({
-      "@type": "ItemList", name: "Zindabaagh apps",
+      "@type": "ItemList", name: "Zindabhaag apps",
       itemListElement: site.apps.map((a, i) => ({ "@type": "ListItem", position: i + 1,
         item: { "@type": "WebApplication", name: a.title, url: a.href, description: a.text, applicationCategory: "EducationalApplication", operatingSystem: "Any", publisher: { "@id": publisher["@id"] } } })) });
     if (page.faq?.length) ld.push({

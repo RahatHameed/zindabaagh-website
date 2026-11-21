@@ -2,7 +2,7 @@
 //
 //   1. "Notify: new lead"   e-mails you every new free evaluation request.
 //   1b. "Notify: new contact message"  e-mails you every message from the contact form.
-//   2. "Rebuild website"    asks Coolify to redeploy zindabaagh.com when a guide, page or the
+//   2. "Rebuild website"    asks Coolify to redeploy zindabhaag.com when a guide, page or the
 //                           site settings are created, changed or deleted.
 //
 // Reads from ~/.zindabaagh-cms.env (or the environment):
@@ -26,7 +26,7 @@ try {
   }
 } catch { /* no env file */ }
 
-const url = (env.CMS_URL || "https://cms.zindabaagh.com").replace(/\/+$/, "");
+const url = (env.CMS_URL || "https://cms.zindabhaag.com").replace(/\/+$/, "");
 if (!env.CMS_ADMIN_TOKEN) { console.error("CMS_ADMIN_TOKEN is missing in ~/.zindabaagh-cms.env"); process.exit(1); }
 
 async function api(method, path, body) {

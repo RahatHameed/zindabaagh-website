@@ -3,9 +3,9 @@ services:
     image: 'directus/directus:11'
     environment:
       - SERVICE_URL_DIRECTUS_8055
-      - 'PUBLIC_URL=https://cms.zindabaagh.com'
+      - 'PUBLIC_URL=https://cms.zindabhaag.com'
       - 'SECRET=${SERVICE_BASE64_64_SECRET}'
-      - 'ADMIN_EMAIL=${ADMIN_EMAIL:-hello@zindabaagh.com}'
+      - 'ADMIN_EMAIL=${ADMIN_EMAIL:-hello@zindabhaag.com}'
       - 'ADMIN_PASSWORD=${SERVICE_PASSWORD_ADMIN}'
       - DB_CLIENT=sqlite3
       - DB_FILENAME=/directus/database/data.db
@@ -18,7 +18,7 @@ services:
       - 'STORAGE_R2_ENDPOINT=${R2_ENDPOINT:-https://ACCOUNT_ID.r2.cloudflarestorage.com}'
       - STORAGE_R2_FORCE_PATH_STYLE=true
       - CORS_ENABLED=true
-      - 'CORS_ORIGIN=https://zindabaagh.com,https://www.zindabaagh.com'
+      - 'CORS_ORIGIN=https://zindabhaag.com,https://www.zindabhaag.com,https://zindabaagh.com,https://www.zindabaagh.com'
       - RATE_LIMITER_ENABLED=true
       - RATE_LIMITER_POINTS=50
       - RATE_LIMITER_DURATION=10
@@ -27,7 +27,7 @@ services:
       - EMAIL_SMTP_PORT=587
       - 'EMAIL_SMTP_USER=${BREVO_SMTP_USER:-not-set}'
       - 'EMAIL_SMTP_PASSWORD=${BREVO_SMTP_KEY:-not-set}'
-      - EMAIL_FROM=noreply@mail.zindabaagh.com
+      - EMAIL_FROM=noreply@mail.zindabhaag.com
       - TELEMETRY=false
       - WEBSOCKETS_ENABLED=false
       - FILES_MAX_UPLOAD_SIZE=10mb

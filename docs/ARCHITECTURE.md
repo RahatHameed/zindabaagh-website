@@ -1,24 +1,24 @@
-# Zindabaagh: architecture
+# Zindabhaag: architecture
 
 _Last updated: 2026-11-12_
 
-Everything that makes up zindabaagh.com, how the parts talk to each other, where every key lives
+Everything that makes up zindabhaag.com, how the parts talk to each other, where every key lives
 and when it was created. For day-to-day use of the admin panel see [USING-DIRECTUS.md](USING-DIRECTUS.md);
 for setting everything up from scratch see the [README](../README.md).
 
 ## 1. Overview
 
 ```
-                         Cloudflare DNS (zindabaagh.com, all records "DNS only")
+                         Cloudflare DNS (zindabhaag.com, all records "DNS only")
                                          │
                                          ▼
                 ┌────────────── Hetzner server "main-server" (2.31.191.119) ──────────────┐
-                │  Coolify (coolify.zindabaagh.com) + Traefik proxy, Let's Encrypt certs   │
+                │  Coolify (coolify.zindabhaag.com) + Traefik proxy, Let's Encrypt certs   │
                 │                                                                         │
                 │  App "zindabaagh-website"            Service "zindabaagh-cms"           │
                 │  (project "zindabaagh website")      (project "zinda sub domains")      │
                 │  nginx serving the static site        ├─ directus  (Directus 11)        │
-                │  zindabaagh.com, www                  │   cms.zindabaagh.com            │
+                │  zindabhaag.com, www                  │   cms.zindabhaag.com            │
                 │                                       │   SQLite on volume              │
                 │                                       │   + upload-guard extension      │
                 │                                       └─ backup    (Alpine + cron)      │
@@ -28,13 +28,13 @@ for setting everything up from scratch see the [README](../README.md).
               RahatHameed/              │                           ▼
               zindabaagh-website ──push─┘                 Cloudflare R2 bucket "zindabaagh-cms" (EU)
                                                          
-   E-mail out: Directus → Brevo SMTP (mail.zindabaagh.com) → your inbox
-   E-mail in:  hello@ / support@ / privacy@zindabaagh.com → Cloudflare Email Routing → zindabaagh@gmail.com
+   E-mail out: Directus → Brevo SMTP (mail.zindabhaag.com) → your inbox
+   E-mail in:  hello@ / support@ / privacy@zindabhaag.com → Cloudflare Email Routing → zindabaagh@gmail.com
    Bookings:   1-on-1 calls → Cal.com (https://app.cal.com/discover/rahat-hameed-1n1)
-   Separate:   ExamKlar (examklar.zindabaagh.com) - own app, own repo, own Supabase project
+   Separate:   ExamKlar (examklar.com) - own app, own repo, own Supabase project
 ```
 
-## 2. The website (zindabaagh.com)
+## 2. The website (zindabhaag.com)
 
 | | |
 |---|---|
@@ -42,12 +42,12 @@ for setting everything up from scratch see the [README](../README.md).
 | Type | Static site, built by `build.mjs` (Node, no dependencies), served by `nginx-unprivileged` |
 | Hosting | Coolify app `zindabaagh-website`, Dockerfile build pack, port 8080, health check `/healthz` |
 | Deploys | Every push to `main` (GitHub App webhook), and every publish in the CMS (flow "Rebuild website") |
-| Domains | `https://zindabaagh.com`, `https://www.zindabaagh.com` (two separate entries in Coolify) |
+| Domains | `https://zindabhaag.com`, `https://www.zindabhaag.com` (two separate entries in Coolify) |
 
 **How a build works** (`Dockerfile` step 1 runs `node build.mjs`):
 
 1. Reads `content/site.json` (menu, footer, tools, services, yearly figures).
-2. If `cms.url` is set (it is: `https://cms.zindabaagh.com`), fetches from Directus:
+2. If `cms.url` is set (it is: `https://cms.zindabhaag.com`), fetches from Directus:
    the `site` item (tagline, menu, menu button, services) and all **published** `guides` and `pages`.
    CMS values replace the file values. If Directus is unreachable, the build continues with the files.
 3. Renders every page in `content/pages/**` plus every CMS guide/page into `dist/`, with header, footer,
@@ -57,11 +57,11 @@ for setting everything up from scratch see the [README](../README.md).
 **Pages:** home, 8 tools (`/tools/<slug>`, all calculations run in the browser), `/guides` + guides,
 `/services`, `/free-evaluation`, Impressum, privacy policy.
 
-**Security headers** (nginx.conf): CSP (`default-src 'self'`, form/API calls only to cms.zindabaagh.com),
+**Security headers** (nginx.conf): CSP (`default-src 'self'`, form/API calls only to cms.zindabhaag.com),
 X-Frame-Options DENY, nosniff, Referrer-Policy, Permissions-Policy. No cookies, no analytics, no third-party
 scripts or fonts, so no cookie banner is needed.
 
-## 3. The CMS (cms.zindabaagh.com)
+## 3. The CMS (cms.zindabhaag.com)
 
 Directus 11, Coolify Docker Compose service `zindabaagh-cms`. The compose file is generated from
 `cms/compose.template.yml` by `node cms/make-compose.mjs` (see section 7).
@@ -76,14 +76,14 @@ Directus 11, Coolify Docker Compose service `zindabaagh-cms`. The compose file i
 | Files, folder **Lead uploads** | Documents from the form (IELTS, CV, degree, transcript) | **Create only**: PDF/JPG/PNG/WEBP, max 10 MB; never readable or listable |
 
 **Users / roles**
-- Admin: `hello@zindabaagh.com` (password in Coolify, see section 6).
+- Admin: `hello@zindabhaag.com` (password in Coolify, see section 6).
 - "Guide publisher": no app login; its token (`CMS_TOKEN`) may only create/read/update guides and files.
   Used by `cms/publish-guide.mjs` and the reel-post-package skill.
 
 **Automations (Settings → Flows)**, created by `node cms/flows.mjs`:
-- **Notify: new lead**: on every new lead, e-mails all answers + a link to the lead to `hello@zindabaagh.com`.
+- **Notify: new lead**: on every new lead, e-mails all answers + a link to the lead to `hello@zindabhaag.com`.
 - **Rebuild website**: on create/update/delete of guides, pages or site, sends
-  `POST https://coolify.zindabaagh.com/api/v1/deploy?uuid=rt1bcj6gvrcspoud34r4lidf&force=true`
+  `POST https://coolify.zindabhaag.com/api/v1/deploy?uuid=rt1bcj6gvrcspoud34r4lidf&force=true`
   with the Coolify token. `force=true` is required: otherwise Coolify reuses the old image and skips the build.
 
 **upload-guard extension** (`cms/extensions/upload-guard/`): after every upload into "Lead uploads" it
@@ -92,7 +92,7 @@ and a PDF contains no active content (`/JavaScript`, `/Launch`, `/EmbeddedFile`,
 removes empty records left by refused uploads, and documents older than 2 hours that no lead points to
 (abandoned forms, bots, and the documents of leads you deleted). It also checks **Cloudflare Turnstile** on
 every public lead and contact message (collections `leads` and `messages`): the form sends the token as `captcha`, the hook verifies it with Cloudflare
-(`TURNSTILE_SECRET`, hostname must be zindabaagh.com / www) and removes it before saving; a failed check
+(`TURNSTILE_SECRET`, hostname must be zindabhaag.com / www) and removes it before saving; a failed check
 answers 400. Logged-in users and API tokens are not checked. Without `TURNSTILE_SECRET` the check is off,
 and if Cloudflare cannot be reached the lead is accepted (logged). Directus itself enforces `FILES_MAX_UPLOAD_SIZE=10mb` and a
 MIME allow-list. Tested on 2026-11-12: real PDF kept; fake PDF (exe), PDF with JavaScript, wrong extension,
@@ -125,18 +125,18 @@ container, and start the service again. **A restore has not been tested yet.**
 
 | Address / tool | Direction | Path |
 |---|---|---|
-| `hello@zindabaagh.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (rule added 2026-11-12) |
-| `support@`, `privacy@zindabaagh.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (added for ExamKlar) |
-| Everything else @zindabaagh.com | in | dropped (catch-all disabled) |
+| `hello@zindabhaag.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (rule added 2026-11-12) |
+| `support@`, `privacy@zindabhaag.com` | in | Cloudflare Email Routing → zindabaagh@gmail.com (added for ExamKlar) |
+| Everything else @zindabhaag.com | in | dropped (catch-all disabled) |
 | Contact form notification | out | Flow "Notify: new contact message" → Brevo → zindabaagh@gmail.com, Reply-To = the sender (added 2026-11-12) |
 | Lead notification | out | Flow "Notify: new lead" → Brevo → **zindabaagh@gmail.com directly** (since 2026-11-12, not via hello@), Reply-To = the visitor's e-mail |
-| `noreply@mail.zindabaagh.com` | out | Directus → Brevo SMTP (`smtp-relay.brevo.com:587`); domain authenticated in Brevo (DKIM/DMARC in Cloudflare) |
+| `noreply@mail.zindabhaag.com` | out | Directus → Brevo SMTP (`smtp-relay.brevo.com:587`); domain authenticated in Brevo (DKIM/DMARC in Cloudflare) |
 | Cal.com | bookings | 1-on-1 calls with online payment; linked from `/services` and the home page |
 
 ## 6. Keys, passwords and where they live
 
-No secret is stored in this repository. Values live in **Bitwarden** (note "Zindabaagh CMS (Directus) -
-cms.zindabaagh.com"), in **Coolify**, and in the local file **`C:\Users\Zigron\.zindabaagh-cms.env`**
+No secret is stored in this repository. Values live in **Bitwarden** (note "Zindabhaag CMS (Directus) -
+cms.zindabhaag.com"), in **Coolify**, and in the local file **`C:\Users\Zigron\.zindabaagh-cms.env`**
 (used by the scripts in `cms/`).
 
 | Secret | Created | Where it is used / stored | Who can change it |
@@ -151,7 +151,7 @@ cms.zindabaagh.com"), in **Coolify**, and in the local file **`C:\Users\Zigron\.
 | Brevo SMTP key `zindabaagh-cms` | 2026-11-12, Brevo → SMTP & API | Coolify env `BREVO_SMTP_KEY`; Bitwarden. Login (not secret): `BREVO_SMTP_USER=c29990001@smtp-brevo.com` | Brevo |
 | Coolify API token `directus-rebuild` | 2026-11-12, Coolify → Keys & Tokens (permission **deploy** only, resource **zindabaagh-website** only, no expiry) | `~/.zindabaagh-cms.env` `COOLIFY_TOKEN`; inside the Directus flow "Rebuild website"; Bitwarden | Coolify |
 | `COOLIFY_DEPLOY_WEBHOOK` (not secret) | 2026-11-12 | `~/.zindabaagh-cms.env` and the flow | |
-| Turnstile widget "zindabaagh free evaluation": **secret key** | 2026-11-12, Cloudflare → Application security → Turnstile (hostname zindabaagh.com, mode Managed) | Coolify env `TURNSTILE_SECRET` (service zindabaagh-cms, read by the upload-guard hook); Bitwarden | Cloudflare → Turnstile → widget → Rotate secret key |
+| Turnstile widget "zindabaagh free evaluation": **secret key** | 2026-11-12, Cloudflare → Application security → Turnstile (hostname zindabhaag.com, mode Managed) | Coolify env `TURNSTILE_SECRET` (service zindabaagh-cms, read by the upload-guard hook); Bitwarden | Cloudflare → Turnstile → widget → Rotate secret key |
 | Turnstile **site key** (not secret) | 2026-11-12, same widget | `content/site.json` → `cms.turnstileSiteKey` (public, sent to browsers) | |
 
 **Settings changed on 2026-11-12:** Coolify API access enabled (Settings → Advanced); Cloudflare Email Routing

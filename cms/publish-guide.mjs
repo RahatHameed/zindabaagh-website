@@ -23,7 +23,7 @@ try {
   }
 } catch { /* no env file: use the environment */ }
 
-const url = (env.CMS_URL || "https://cms.zindabaagh.com").replace(/\/+$/, ""), token = env.CMS_TOKEN;
+const url = (env.CMS_URL || "https://cms.zindabhaag.com").replace(/\/+$/, ""), token = env.CMS_TOKEN;
 const file = process.argv[2], publish = process.argv.includes("--publish");
 if (!url || !token || !file) { console.error("Usage: node cms/publish-guide.mjs guide.json [--publish]   (needs CMS_URL and CMS_TOKEN)"); process.exit(1); }
 
@@ -68,4 +68,4 @@ const saved = existing ? await api("PATCH", `/items/guides/${existing.id}`, item
 console.log(`${existing ? "Updated" : "Created"} guide "${saved.title}" (${saved.status}).`);
 console.log(`Edit:   ${url}/admin/content/guides/${saved.id}`);
 if (saved.cover) console.log(`Image:  ${url}/assets/${saved.cover}`);
-console.log(`Public: https://zindabaagh.com/guides/${saved.slug}${saved.status === "published" ? "  (after the website has rebuilt)" : "  (once published)"}`);
+console.log(`Public: https://zindabhaag.com/guides/${saved.slug}${saved.status === "published" ? "  (after the website has rebuilt)" : "  (once published)"}`);

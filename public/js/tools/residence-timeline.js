@@ -43,7 +43,7 @@
       <p class="big" style="font-size:1.6rem">${day(citizen)}</p>
       ${status(citizen)}
       <p class="muted">${F.citizenshipYears} years of legal residence, counted from ${day(arrival)}.${german !== "b1" ? " You need German at B1 and the citizenship test." : " You also need the citizenship test."}</p>
-      ${german !== "b1" ? `<p><a href="https://examklar.zindabaagh.com" target="_blank" rel="noopener">Prepare for the B1 exam with ExamKlar ↗</a></p>` : ""}
+      ${german !== "b1" ? `<p><a href="https://examklar.com" target="_blank" rel="noopener">Prepare for the B1 exam with ExamKlar ↗</a></p>` : ""}
       <p class="muted">These are the earliest dates the waiting period ends. Long stays abroad can interrupt it, and the authority checks the other conditions too.</p>`;
   });
 })();
